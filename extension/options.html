@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PowerSchool Enhancer Settings</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body class="options-page">
+  <header class="page-header">
+    <h1>PowerSchool Enhancer</h1>
+    <p class="subtitle">Grade highlighting for PowerTeacher Pro scoresheets</p>
+    <span id="save-status" class="save-status" aria-live="polite"></span>
+  </header>
+
+  <main>
+    <section class="card">
+      <label class="switch-row">
+        <input type="checkbox" id="enabled">
+        <span>Highlighting on</span>
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Assignment highlights</h2>
+      <p class="hint">
+        A score is in a band when it is at least <b>Min</b> and below <b>Max</b>.
+        Leave Max blank for "and above". The first matching band from the top wins.
+      </p>
+      <div id="assignment-bands"></div>
+    </section>
+
+    <section class="card">
+      <h2>Final grade</h2>
+      <label class="switch-row">
+        <input type="checkbox" id="final-include">
+        <span>Include final grade column</span>
+      </label>
+      <div id="final-options">
+        <label class="switch-row">
+          <input type="checkbox" id="final-same">
+          <span>Use the same bands as assignments</span>
+        </label>
+        <div id="final-bands"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Score codes</h2>
+      <p class="hint">
+        Color cells whose score or final grade is a special code from your district's
+        grade scale (for example <b>M</b> for Medical). Codes override flags and score bands.
+      </p>
+      <div id="score-codes"></div>
+    </section>
+
+    <section class="card">
+      <h2>Flags</h2>
+      <p class="hint">
+        Color cells that PowerTeacher has flagged. A flag color overrides the score band.
+        If a cell has several flags, the highest one in this list wins.
+      </p>
+      <div id="flags"></div>
+    </section>
+
+    <section class="actions">
+      <button type="button" id="reset" class="secondary">Reset to defaults</button>
+    </section>
+  </main>
+
+  <script src="settings.js"></script>
+  <script src="band-editor.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

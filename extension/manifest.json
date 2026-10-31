@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "PowerSchool Enhancer",
+  "version": "2.0.0",
+  "description": "Highlight grades in the PowerTeacher Pro scoresheet with your own color bands, final-grade highlighting and flag colors.",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_title": "PowerSchool Enhancer",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.powerschool.com/teachers/*"
+      ],
+      "js": [
+        "settings.js",
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "injected.js"
+      ],
+      "matches": [
+        "https://*.powerschool.com/*"
+      ]
+    }
+  ]
+}

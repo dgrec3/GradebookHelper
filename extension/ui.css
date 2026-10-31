@@ -1,0 +1,150 @@
+/* Shared styles for the popup and options page. */
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #1f2933;
+  --muted-text: #616e7c;
+  --border: #d9e2ec;
+  --accent: #0b5cad;
+  --warn-bg: #fff8e1;
+  --warn-text: #8a6100;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1f24;
+    --card: #252b32;
+    --text: #e4e7eb;
+    --muted-text: #9aa5b1;
+    --border: #3e4c59;
+    --accent: #5aa9f0;
+    --warn-bg: #3a3220;
+    --warn-text: #f0c36d;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+h1 { font-size: 20px; margin: 0; }
+h2 { font-size: 15px; margin: 0 0 8px; }
+
+button {
+  font: inherit;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.4; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.icon-button { padding: 4px 8px; }
+
+input[type="number"] {
+  width: 72px;
+  padding: 4px 6px;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--text);
+}
+
+input[type="text"] {
+  padding: 4px 6px;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--text);
+}
+.code-input { width: 64px; text-transform: uppercase; }
+.label-input { width: 180px; }
+
+input[type="color"] {
+  width: 36px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+/* A sample "score" cell so teachers can judge readability of each color. */
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 26px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+  font-size: 13px;
+}
+.swatch.small { min-width: 16px; width: 16px; height: 16px; }
+.swatch.muted { opacity: 0.3; }
+
+.hint { color: var(--muted-text); margin: 0 0 12px; }
+
+/* ── Options page ───────────────────────────────────────────── */
+.options-page { padding: 24px 16px 48px; }
+.options-page main,
+.options-page .page-header { max-width: 680px; margin: 0 auto; }
+.page-header { position: relative; margin-bottom: 16px; }
+.subtitle { color: var(--muted-text); margin: 4px 0 0; }
+.save-status { position: absolute; top: 4px; right: 0; color: var(--muted-text); font-size: 12px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.band-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.band-row, .flag-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.flag-row .switch-row { min-width: 130px; }
+.range { display: inline-flex; align-items: center; gap: 4px; }
+
+#final-options { margin-left: 26px; }
+#final-bands { margin-top: 8px; }
+
+.issues { margin: 10px 0 0; padding-left: 18px; color: var(--warn-text); }
+.issues:empty { display: none; }
+.issues li { background: var(--warn-bg); padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; }
+
+.actions { max-width: 680px; margin: 0 auto; text-align: right; }
+
+/* ── Popup ──────────────────────────────────────────────────── */
+.popup-page { width: 260px; padding: 14px; }
+.popup-page h1 { font-size: 16px; margin-bottom: 8px; }
+.popup-page h2 { margin-top: 12px; font-size: 13px; color: var(--muted-text); text-transform: uppercase; letter-spacing: 0.04em; }
+.popup-page .primary { width: 100%; margin-top: 14px; }
+.band-summary { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+.summary-row { display: flex; align-items: center; gap: 8px; }
+.muted-section { opacity: 0.45; pointer-events: none; }

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PowerSchool Enhancer</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body class="popup-page">
+  <h1>PowerSchool Enhancer</h1>
+
+  <label class="switch-row">
+    <input type="checkbox" id="enabled">
+    <span>Highlighting on</span>
+  </label>
+
+  <div id="details">
+    <h2>Bands</h2>
+    <div id="band-summary" class="band-summary"></div>
+
+    <label class="switch-row">
+      <input type="checkbox" id="final-include">
+      <span>Include final grade</span>
+    </label>
+
+    <h2>Score codes</h2>
+    <div id="score-codes"></div>
+
+    <h2>Flags</h2>
+    <div id="flags"></div>
+  </div>
+
+  <button type="button" id="open-options" class="primary">Edit colors &amp; thresholds…</button>
+
+  <script src="settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
