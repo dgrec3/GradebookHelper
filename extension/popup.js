@@ -7,6 +7,7 @@
 
   const enabledInput = document.getElementById('enabled');
   const finalInclude = document.getElementById('final-include');
+  const multiEnabled = document.getElementById('multi-enabled');
   const details = document.getElementById('details');
   const bandSummary = document.getElementById('band-summary');
   const flagsContainer = document.getElementById('flags');
@@ -38,6 +39,7 @@
   function render() {
     enabledInput.checked = settings.enabled;
     finalInclude.checked = settings.finalGrade.include;
+    multiEnabled.checked = settings.multiHighlight.enabled;
     details.classList.toggle('muted-section', !settings.enabled);
 
     bandSummary.replaceChildren();
@@ -93,6 +95,11 @@
 
   finalInclude.addEventListener('change', () => {
     settings.finalGrade.include = finalInclude.checked;
+    persist();
+  });
+
+  multiEnabled.addEventListener('change', () => {
+    settings.multiHighlight.enabled = multiEnabled.checked;
     persist();
   });
 

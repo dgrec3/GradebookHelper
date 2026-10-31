@@ -36,6 +36,12 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 - **Precedence:** score code > flag > score band.
 - ☐ Verify an `M` entered on an assignment shows as text "M".
 
+## 3c. Split highlighting (v2.1.0)
+- ☑ A cell meeting several conditions gets equal left-to-right stripes (max 2 or 3; default on, 3).
+- ☑ Order: grade band → Late/Missing → other codes and flags. Split off = single color, code → flag → band.
+- ☑ Rendered as a hard-stop `linear-gradient(to right, …)` via per-cell CSS variables.
+- ☑ Mixed text contrast → black text with white halo.
+
 ## 4. Readability
 - ☑ Text color is picked automatically (black or white) from the background's luminance (WCAG relative-luminance formula, threshold ≈ 0.179).
 
@@ -51,7 +57,7 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 
 ## 7. Performance (keep v1.2 safeguards)
 - ☑ Keep the duplicate-load guard, CSS classes (not inline styles), debounced rescans, and relevance-filtered MutationObserver.
-- ☑ CSS is regenerated into one `<style>` tag when settings change. Each band or code gets a class (`ptp-a-<n>`, `ptp-f-<n>`, `ptp-flag-<key>`).
+- ☑ One static `<style>` tag; each highlighted cell gets class `ptp-hl` plus `--ptp-bg/--ptp-fg/--ptp-shadow` variables (since 2.1.0).
 
 ## 8. Chrome Web Store readiness (later phase)
 - ☑ Narrow host permissions to the gradebook pages only. Permissions: `storage` only.

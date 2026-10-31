@@ -16,6 +16,10 @@
   const finalBandsContainer = document.getElementById('final-bands');
   const flagsContainer = document.getElementById('flags');
   const scoreCodesContainer = document.getElementById('score-codes');
+  const multiEnabled = document.getElementById('multi-enabled');
+  const multiMax = document.getElementById('multi-max');
+  const multiOptions = document.getElementById('multi-options');
+  const multiPreview = document.getElementById('multi-preview-swatch');
   const saveStatus = document.getElementById('save-status');
 
   const assignmentEditor = createBandEditor(document.getElementById('assignment-bands'), bands => {
@@ -193,7 +197,26 @@
     finalBandsContainer.hidden = settings.finalGrade.useAssignmentBands;
   }
 
+  // The preview shows real colors in display order (first band, Late, first
+  // score code), cut to the chosen number of segments.
+  function renderMultiHighlight() {
+    multiEnabled.checked = settings.multiHighlight.enabled;
+    multiMax.value = String(settings.multiHighlight.max);
+    multiOptions.classList.toggle('muted-section', !settings.multiHighlight.enabled);
+
+    const sampleColors = [
+      settings.assignmentBands[0]?.color || '#ff4d4d',
+      settings.flags.late.color,
+      settings.scoreCodes[0]?.color || settings.flags.absent.color
+    ].slice(0, settings.multiHighlight.max);
+    const share = 100 / sampleColors.length;
+    multiPreview.style.background = `linear-gradient(to right, ${sampleColors
+      .map((color, index) => `${color} ${index * share}% ${(index + 1) * share}%`)
+      .join(', ')})`;
+  }
+
   function renderAll() {
+    renderMultiHighlight();
     enabledInput.checked = settings.enabled;
     finalInclude.checked = settings.finalGrade.include;
     finalSame.checked = settings.finalGrade.useAssignmentBands;
@@ -206,6 +229,18 @@
 
   enabledInput.addEventListener('change', () => {
     settings.enabled = enabledInput.checked;
+    scheduleSave();
+  });
+
+  multiEnabled.addEventListener('change', () => {
+    settings.multiHighlight.enabled = multiEnabled.checked;
+    renderMultiHighlight();
+    scheduleSave();
+  });
+
+  multiMax.addEventListener('change', () => {
+    settings.multiHighlight.max = Number(multiMax.value);
+    renderMultiHighlight();
     scheduleSave();
   });
 

@@ -21,6 +21,29 @@
     </section>
 
     <section class="card">
+      <h2>Multiple matches</h2>
+      <label class="switch-row">
+        <input type="checkbox" id="multi-enabled">
+        <span>Split a cell when it meets more than one condition</span>
+      </label>
+      <div id="multi-options" class="multi-options">
+        <label for="multi-max">Show up to</label>
+        <select id="multi-max">
+          <option value="2">2 colors (halves)</option>
+          <option value="3">3 colors (thirds)</option>
+        </select>
+        <div class="multi-preview" aria-hidden="true">
+          <span class="swatch split" id="multi-preview-swatch">85</span>
+        </div>
+      </div>
+      <p class="hint">
+        Colors go left to right: the <b>grade</b> color first, then <b>Late / Missing</b>,
+        then any other code or flag (Medical, Exempt, Incomplete, Absent…).
+        When off, a single color is shown: score code, then flag, then grade.
+      </p>
+    </section>
+
+    <section class="card">
       <h2>Assignment highlights</h2>
       <p class="hint">
         A score is in a band when it is at least <b>Min</b> and below <b>Max</b>.

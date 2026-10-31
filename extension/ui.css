@@ -132,6 +132,21 @@ input[type="color"] {
 .range { display: inline-flex; align-items: center; gap: 4px; }
 
 #final-options { margin-left: 26px; }
+
+.multi-options { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px 26px; }
+.multi-options select {
+  font: inherit;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--text);
+}
+.swatch.split {
+  min-width: 72px;
+  color: #000;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
+}
 #final-bands { margin-top: 8px; }
 
 .issues { margin: 10px 0 0; padding-left: 18px; color: var(--warn-text); }

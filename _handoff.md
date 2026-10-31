@@ -3,7 +3,7 @@
 _Last updated: 2026-10-30_
 
 ## What it is
-Chrome MV3 extension that highlights grades in the PowerTeacher Pro scoresheet. Cloned from `github.com/dgrec3/GradebookHelper` (v1.2.1, hard-coded red/yellow). Now v2.0.0 with full customization. Long-term goal: Chrome Web Store release.
+Chrome MV3 extension that highlights grades in the PowerTeacher Pro scoresheet. Cloned from `github.com/dgrec3/GradebookHelper` (v1.2.1, hard-coded red/yellow). v2.0.0 (branch `v1.01`, pushed) added full customization. v2.1.0 (branch `v1.02`, pushed) adds split highlighting. Long-term goal: Chrome Web Store release.
 
 ## Files
 All extension code lives in `extension/`, which is the folder to load in Chrome. Docs stay at the project root because Chrome refuses to load a folder containing `_`-prefixed files like this one.
@@ -36,6 +36,8 @@ All extension code lives in `extension/`, which is the folder to load in Chrome.
 - Options page and popup render and behave correctly (served over localhost).
 - Unpacked extension (from `extension/`) loads in Chrome without errors (confirmed by user 2026-10-30).
 - **Not yet verified in the installed extension:** `chrome.storage` save/sync and the popup's "Edit colors" button.
+
+- Split highlighting (2.1.0): ordering tested with real content.js against stand-in cells (max 3, max 2, off). Stripe rendering checked visually on a live scoresheet.
 
 ## Next steps
 1. Load unpacked in Chrome (`chrome://extensions` → Developer mode → Load unpacked → pick the `extension` folder) and smoke-test.

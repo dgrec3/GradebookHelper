@@ -45,6 +45,8 @@
   const MAX_SCORE_CODES = 20;
   const MAX_CODE_LENGTH = 6;
   const MAX_LABEL_LENGTH = 40;
+  const MIN_SPLIT_SEGMENTS = 2;
+  const MAX_SPLIT_SEGMENTS = 3;
 
   function getDefaults() {
     const flags = {};
@@ -62,6 +64,9 @@
         bands: cloneBands(DEFAULT_BANDS)
       },
       scoreCodes: cloneBands(DEFAULT_SCORE_CODES),
+      // When a cell meets several conditions (e.g. 65% and Late), split it into
+      // left-to-right stripes, one per condition, up to `max`.
+      multiHighlight: { enabled: true, max: MAX_SPLIT_SEGMENTS },
       flags
     };
   }
@@ -141,8 +146,18 @@
         bands: normalizeBands(rawFinal.bands, assignmentBands)
       },
       scoreCodes: normalizeScoreCodes(migrated.scoreCodes),
+      multiHighlight: {
+        enabled: migrated.multiHighlight?.enabled !== false,
+        max: clampInteger(migrated.multiHighlight?.max, MIN_SPLIT_SEGMENTS, MAX_SPLIT_SEGMENTS, MAX_SPLIT_SEGMENTS)
+      },
       flags
     };
+  }
+
+  function clampInteger(value, min, max, fallback) {
+    const number = Math.round(Number(value));
+    if (!Number.isFinite(number)) return fallback;
+    return Math.min(max, Math.max(min, number));
   }
 
   // Returns the index of the first enabled code whose text equals the cell's
@@ -261,6 +276,8 @@
     MAX_SCORE_CODES,
     MAX_CODE_LENGTH,
     MAX_LABEL_LENGTH,
+    MIN_SPLIT_SEGMENTS,
+    MAX_SPLIT_SEGMENTS,
     getDefaults,
     normalize,
     cloneBands,

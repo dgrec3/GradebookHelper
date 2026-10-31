@@ -1,5 +1,17 @@
 # Changelog — PowerSchool Enhancer
 
+## 2.1.0 — 2026-10-30 (branch v1.02)
+
+### Added
+- **Split highlighting**: when a cell meets more than one condition, it is divided into equal left-to-right stripes (halves for 2, thirds for 3). On by default; max 2 or 3 is set on the options page; toggle also in the popup.
+- Stripe order: **grade band → Late / Missing → other codes and flags** (score codes, Exempt, Incomplete, Absent).
+- If stripes need different text colors, the text is black with a white halo so it stays readable on every stripe.
+
+### Changed
+- With split highlighting off, the single-color priority is the same as 2.0.0: score code → flag → grade band.
+- A matched score code (e.g. M) no longer adds a separate Exempt stripe, because PowerTeacher marks those codes exempt anyway.
+- Highlight colors are now per-cell CSS variables on one static stylesheet instead of one CSS class per band/flag/code. This is needed so any color combination can be split.
+
 ## 2.0.0 — 2026-10-30
 Renamed from "PowerTeacher Gradebook - Highlight Low Grades" (GradebookHelper v1.2.1).
 
