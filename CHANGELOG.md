@@ -1,6 +1,9 @@
 # Changelog — PowerSchool Enhancer
 
-## 2.1.0 — 2026-10-30 (branch v1.02)
+## 1.0 — 2026-11-10
+First release under the PowerSchool Enhancer name (manifest version `1.0`). It includes all the work below, which was built as pre-release 2.0.0 and 2.1.0. Those numbers were never published.
+
+## Pre-release 2.1.0 — 2026-10-30 (branch v1.02)
 
 ### Added
 - **Split highlighting**: when a cell meets more than one condition, it is divided into equal left-to-right stripes (halves for 2, thirds for 3). On by default; max 2 or 3 is set on the options page; toggle also in the popup.
@@ -12,7 +15,7 @@
 - A matched score code (e.g. M) no longer adds a separate Exempt stripe, because PowerTeacher marks those codes exempt anyway.
 - Highlight colors are now per-cell CSS variables on one static stylesheet instead of one CSS class per band/flag/code. This is needed so any color combination can be split.
 
-## 2.0.0 — 2026-10-30
+## Pre-release 2.0.0 — 2026-10-30
 Renamed from "PowerTeacher Gradebook - Highlight Low Grades" (GradebookHelper v1.2.1).
 
 ### Added
