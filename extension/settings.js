@@ -23,10 +23,12 @@
     { key: 'late',       label: 'Late',       iconClass: 'ps-late-flag',          tag: 'Late', letter: 'L' }
   ];
 
-  // Defaults reproduce v1.2.1 exactly: red below 70%, yellow 70% up to 80%.
+  // Default bands (chosen 2026-11-10): red below 70%, yellow 70% up to 80%,
+  // green 80% and up, so every graded cell gets a color out of the box.
   const DEFAULT_BANDS = [
-    { enabled: true, min: 0,  max: 70, color: '#ff4d4d' },
-    { enabled: true, min: 70, max: 80, color: '#ffeb3b' }
+    { enabled: true, min: 0,  max: 70,   color: '#ff4d4d' },
+    { enabled: true, min: 70, max: 80,   color: '#ffeb3b' },
+    { enabled: true, min: 80, max: null, color: '#4caf50' }
   ];
 
   // Special grade-scale codes are defined per district (HCST: X, M, I, WP, WF),
@@ -54,7 +56,7 @@
       enabled: true,
       assignmentBands: cloneBands(DEFAULT_BANDS),
       finalGrade: {
-        include: false,
+        include: true,
         useAssignmentBands: true,
         bands: cloneBands(DEFAULT_BANDS)
       },
@@ -71,7 +73,7 @@
       colorStrength: DEFAULT_COLOR_STRENGTH,
       // Row tracking aids on the scoresheet.
       rowHover: true,
-      rowDividers: 'both',
+      rowDividers: 'every',
       // Put PowerTeacher's comment bubble on a white badge so it shows on colors.
       commentBadge: true
     };
@@ -137,7 +139,8 @@
       enabled: migrated.enabled !== false,
       assignmentBands,
       finalGrade: {
-        include: rawFinal.include === true,
+        // A missing value takes the default (on); a saved choice is kept.
+        include: typeof rawFinal.include === 'boolean' ? rawFinal.include : defaults.finalGrade.include,
         useAssignmentBands: rawFinal.useAssignmentBands !== false,
         // Separate final-grade bands start as a copy of the assignment bands.
         bands: normalizeBands(rawFinal.bands, assignmentBands)
@@ -152,7 +155,7 @@
       flagTagLength: FLAG_TAG_LENGTHS.includes(migrated.flagTagLength) ? migrated.flagTagLength : 'letter',
       colorStrength: clampInteger(migrated.colorStrength, MIN_COLOR_STRENGTH, MAX_COLOR_STRENGTH, DEFAULT_COLOR_STRENGTH),
       rowHover: migrated.rowHover !== false,
-      rowDividers: ROW_DIVIDER_MODES.includes(migrated.rowDividers) ? migrated.rowDividers : 'both',
+      rowDividers: ROW_DIVIDER_MODES.includes(migrated.rowDividers) ? migrated.rowDividers : 'every',
       commentBadge: migrated.commentBadge !== false
     };
   }

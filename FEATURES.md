@@ -10,7 +10,7 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 ## 1. Customizable highlight bands (assignments)
 - ☑ Flexible list of bands; teacher can add, remove, reorder, enable/disable each.
 - ☑ Each band: **min %**, **max %** (blank = no upper limit), **color**.
-- ☑ Defaults reproduce today's behavior: `0–70 → red #ff4d4d`, `70–80 → yellow #ffeb3b`.
+- ☑ Defaults (2026-11-10): `0–70 → red #ff4d4d`, `70–80 → yellow #ffeb3b`, `80+ → green #4caf50`.
 - **Algorithm:**
   - percent = score ÷ points possible × 100 (points come from the existing XHR interceptor).
   - A band matches when `min ≤ percent < max` (min inclusive, max exclusive), so 70 is yellow and 69.99 is red, exactly as today.
@@ -18,7 +18,7 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
   - Scores over 100% (extra credit) are handled normally, so a "≥ 100 → green" band works.
 
 ## 2. Final grade column
-- ☑ Toggle: **Include final grade** (default off).
+- ☑ Toggle: **Include final grade** (default on; a missing saved value takes the default, an explicit choice is kept).
 - ☑ Sub-toggle: **Use the same bands as assignments** (default on).
   - When it's turned off, the final grade gets its own band list, pre-filled with a copy of the assignment bands.
 - ☑ Selector `td.final-grade-info-cell`; percent read from `.final-grade-info .percent`.
@@ -71,7 +71,7 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 ## 8c. Row tracking & color strength
 - ☑ `colorStrength` (30–100, default 70): `--ptp-bg` uses `rgba()` via `PTPSettings.withStrength`; text contrast via `blendOverWhite` + `contrastTextColor`; swatches via `paintSwatch`.
 - ☑ `rowHover` (default on): `html.ptp-row-hover table.gridTable tr[id^="std"]:hover` cells get inset top/bottom box-shadows; the name cell gets a light blue tint.
-- ☑ `rowDividers`: off / every / five / both (default both). Uses classes `ptp-row-lines` and `ptp-row-fives` (`:nth-child(5n)`).
+- ☑ `rowDividers`: off / every / five / both (default every). Uses classes `ptp-row-lines` and `ptp-row-fives` (`:nth-child(5n)`).
 - ☑ `flagTagStyle`: filled (default) / outlined.
 - ☑ `flagTagLength`: letter (default; `FLAG_DEFINITIONS[].letter`, 9px, one row) / word (`.tag`, 7px, two per column) via class `ptp-flag-tags-word`.
 - ☑ `commentBadge` (default on): class `ptp-comment-badge` on `<html>`. `span.ps-notes-flag:not(.ng-hide)` gets a white background, `opacity: 1`, and a white-then-navy ring shadow.

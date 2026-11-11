@@ -23,7 +23,7 @@ Color-code PowerTeacher Pro scoresheet grades with your own thresholds, plus cle
 See at a glance which students need attention. Gradebook Enhancer colors the cells of your PowerTeacher Pro scoresheet based on rules you choose.
 
 WHAT IT DOES
-• Score bands: color any score below, between or above the percentages you pick. Add as many bands as you like (for example red below 70%, yellow from 70% to 80%).
+• Score bands: color any score below, between or above the percentages you pick. Add as many bands as you like (out of the box: red below 70%, yellow 70% to 80%, green 80% and up).
 • Final grade column: highlight course grades too, using the same bands or a separate set.
 • Flag tags: PowerTeacher's tiny colored flag squares become clear letters, always in the same spot: M (missing), I (incomplete), L (late), A (absent) and E (exempt). Full words are an option.
 • Score codes: color your district's special codes, like M for Medical.
@@ -93,8 +93,8 @@ PowerTeacher Pro requires a school district teacher login, which we cannot share
 
 1. Install the extension and click its toolbar icon.
 2. Click "See it on a sample gradebook" (or open the options page and click "Try your settings on a sample gradebook").
-3. The sample scoresheet shows score bands (red below 70%, yellow 70–80%) by default.
-4. Click "Turn on all highlight types" to see the M (Medical) score code and final-grade highlighting. Flag letters (M, I, L, A, E) and comment badges show by default.
+3. By default the sample scoresheet shows score bands (red below 70%, yellow 70–80%, green 80%+) on assignments and the course grade, plus flag letters, comment badges and row lines.
+4. Click "Turn on all highlight types" to also color the M (Medical) score code.
 5. Click "Open settings" and change any color or threshold. The sample scoresheet updates immediately.
 
 The content script only runs on https://*.powerschool.com/teachers/* pages. It makes no network requests of its own and does not load remote code.
