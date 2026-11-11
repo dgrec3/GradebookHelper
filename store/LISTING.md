@@ -32,9 +32,6 @@ WHAT IT DOES
 • Readable text: text automatically switches between black and white to stay readable on any color.
 • Live updates: changes in settings show up on your open scoresheet right away. No reload needed.
 
-TRY IT FIRST
-Click the toolbar icon and choose "See it on a sample gradebook" to try every feature on a made-up class.
-
 PRIVACY
 Everything runs inside your browser. The extension does not collect, store or send any student data, and it has no analytics, ads or trackers. Only your color settings are saved, using Chrome's built-in settings sync.
 
@@ -89,15 +86,16 @@ Leave every box unchecked. The extension reads scoresheet content only in the br
 
 ## Test instructions (Distribution → test instructions, if shown)
 ```
-PowerTeacher Pro requires a school district teacher login, which we cannot share because it gives access to real student records (FERPA). The extension includes a built-in demo that runs the same highlighting code on a made-up class:
+PowerTeacher Pro requires a school district teacher login, which we cannot share because it gives access to real student records (FERPA). The extension includes a reviewer demo page that recreates the PowerTeacher scoresheet with a made-up class and runs the same highlighting code:
 
-1. Install the extension and click its toolbar icon.
-2. Click "See it on a sample gradebook" (or open the options page and click "Try your settings on a sample gradebook").
-3. By default the sample scoresheet shows score bands (red below 70%, yellow 70–80%, green 80%+) on assignments and the course grade, plus flag letters, comment badges and row lines.
+1. Install the extension, then open chrome://extensions and copy its ID.
+2. Go to chrome-extension://<that ID>/demo.html
+   (After publishing, the address is chrome-extension://EXTENSION_ID/demo.html. Replace EXTENSION_ID with the ID shown in the developer dashboard.)
+3. The sample scoresheet shows the defaults: score bands (red below 70%, yellow 70–80%, green 80%+) on assignments and the course grade, flag letters (M, I, L, A, E), comment badges and row lines.
 4. Click "Turn on all highlight types" to also color the M (Medical) score code.
-5. Click "Open settings" and change any color or threshold. The sample scoresheet updates immediately.
+5. Click "Open settings" (or right-click the toolbar icon → Options) and change any color or threshold. The sample scoresheet updates immediately.
 
-The content script only runs on https://*.powerschool.com/teachers/* pages. It makes no network requests of its own and does not load remote code.
+The demo page is not linked from the extension's menus; it exists for review and testing. The content script only runs on https://*.powerschool.com/teachers/* pages, makes no network requests of its own, and loads no remote code.
 ```
 
 ## Distribution tab

@@ -8,6 +8,8 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 ---
 
 ## 1. Customizable highlight bands (assignments)
+- ☑ Colors are chosen from a 16-color palette (`color-picker.js`, shared with score codes), with "More colors…" for the full picker.
+- ☑ Band editor (2026-11-10): bands form a ladder, lowest first. Band 1 starts at 0; each start is the previous end (read-only, auto-filled); only the ends are typed; the last can be "and up". Switch a band off to leave its range uncolored. Also: "From X% up to, but not including, Y%" wording, a "Covers …" line, the preview box showing the highest whole score in the band, a 0–100% bar, and per-row warnings. Schema 2; older saves are converted by `toLadder`.
 - ☑ Flexible list of bands; teacher can add, remove, reorder, enable/disable each.
 - ☑ Each band: **min %**, **max %** (blank = no upper limit), **color**.
 - ☑ Defaults (2026-11-10): `0–70 → red #ff4d4d`, `70–80 → yellow #ffeb3b`, `80+ → green #4caf50`.
@@ -71,15 +73,16 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 ## 8c. Row tracking & color strength
 - ☑ `colorStrength` (30–100, default 70): `--ptp-bg` uses `rgba()` via `PTPSettings.withStrength`; text contrast via `blendOverWhite` + `contrastTextColor`; swatches via `paintSwatch`.
 - ☑ `rowHover` (default on): `html.ptp-row-hover table.gridTable tr[id^="std"]:hover` cells get inset top/bottom box-shadows; the name cell gets a light blue tint.
-- ☑ `rowDividers`: off / every / five / both (default every). Uses classes `ptp-row-lines` and `ptp-row-fives` (`:nth-child(5n)`).
+- ☑ `rowDividers`: off / every / five / both (default every).
+- ☑ `lineDarkness` (10–40, default 18): `--ptp-line` on `<html>`; every-5 line = 2.5× (max 0.85). Uses classes `ptp-row-lines` and `ptp-row-fives` (`:nth-child(5n)`).
 - ☑ `flagTagStyle`: filled (default) / outlined.
 - ☑ `flagTagLength`: letter (default; `FLAG_DEFINITIONS[].letter`, 9px, one row) / word (`.tag`, 7px, two per column) via class `ptp-flag-tags-word`.
 - ☑ `commentBadge` (default on): class `ptp-comment-badge` on `<html>`. `span.ps-notes-flag:not(.ng-hide)` gets a white background, `opacity: 1`, and a white-then-navy ring shadow.
 
-## 9. Demo page
+## 9. Demo page (shipped, unlinked: for reviewers, testing and screenshots)
 - ☑ Looks like PowerTeacher Pro's scoresheet (measured styles; made-up class); `?shot` hides the banner for screenshots.
 - ☑ Store screenshots: `py tools/make_screenshots.py` (settings presets default / bands / all via a test-only storage shim).
-- ☑ `demo.html` + `demo.js` + `demo-data.json`: ten made-up students and six assignments in PowerTeacher Pro markup (same td classes, `var` scores, flag icons with `ng-hide`, final-grade `.grade`/`.percent`).
+- ☑ `demo.html` + `demo.js` + `demo-data.json`: 19 made-up students and 5 assignments in PowerTeacher Pro markup (same td classes, `var` scores, flag icons with `ng-hide`, final-grade `.grade`/`.percent`).
 - ☑ Loads its data with a real XHR, so it goes through injected.js → points relay → content.js exactly like PowerTeacher.
 - ☑ Uses the teacher's saved settings and updates live; a "Turn on all highlight types" button enables final grade, every flag and every score code.
 - ☑ `CHANGELOG.md`, `_handoff.md`, `STRATEGIES_THAT_WONT_WORK.md`.

@@ -23,17 +23,19 @@
   const colorStrengthValue = document.getElementById('color-strength-value');
   const rowHover = document.getElementById('row-hover');
   const rowDividers = document.getElementById('row-dividers');
+  const lineDarkness = document.getElementById('line-darkness');
+  const lineDarknessRow = document.getElementById('line-darkness-row');
   const commentBadge = document.getElementById('comment-badge');
   const saveStatus = document.getElementById('save-status');
 
   const assignmentEditor = createBandEditor(document.getElementById('assignment-bands'), bands => {
     settings.assignmentBands = bands;
     scheduleSave();
-  }, () => settings.colorStrength);
+  }, { getStrength: () => settings.colorStrength });
   const finalEditor = createBandEditor(finalBandsContainer, bands => {
     settings.finalGrade.bands = bands;
     scheduleSave();
-  }, () => settings.colorStrength);
+  }, { getStrength: () => settings.colorStrength });
 
   function scheduleSave() {
     saveStatus.textContent = 'Saving…';
@@ -85,10 +87,16 @@
       label.value = entry.label;
       label.setAttribute('aria-label', `Score code ${index + 1} label`);
 
-      const color = document.createElement('input');
-      color.type = 'color';
-      color.value = entry.color;
-      color.setAttribute('aria-label', `Score code ${index + 1} color`);
+      // paint() is defined below; the picker only calls it after a click.
+      const color = createColorPicker({
+        value: entry.color,
+        label: `Score code ${index + 1} color`,
+        onChange: hex => {
+          entry.color = hex;
+          paint();
+          scheduleSave();
+        }
+      });
 
       const remove = document.createElement('button');
       remove.type = 'button';
@@ -115,11 +123,6 @@
       });
       label.addEventListener('input', () => {
         entry.label = label.value;
-        scheduleSave();
-      });
-      color.addEventListener('input', () => {
-        entry.color = color.value;
-        paint();
         scheduleSave();
       });
       remove.addEventListener('click', () => {
@@ -161,6 +164,10 @@
     colorStrengthValue.textContent = `${settings.colorStrength}%`;
     rowHover.checked = settings.rowHover;
     rowDividers.value = settings.rowDividers;
+    lineDarkness.value = String(settings.lineDarkness);
+    // No lines → nothing to darken.
+    lineDarkness.disabled = settings.rowDividers === 'off';
+    lineDarknessRow.classList.toggle('muted-section', settings.rowDividers === 'off');
     commentBadge.checked = settings.commentBadge;
     finalInclude.checked = settings.finalGrade.include;
     finalSame.checked = settings.finalGrade.useAssignmentBands;
@@ -204,6 +211,14 @@
 
   rowDividers.addEventListener('change', () => {
     settings.rowDividers = rowDividers.value;
+    lineDarkness.disabled = settings.rowDividers === 'off';
+    lineDarknessRow.classList.toggle('muted-section', settings.rowDividers === 'off');
+    scheduleSave();
+  });
+
+  // Saves while dragging (debounced), so an open scoresheet updates live.
+  lineDarkness.addEventListener('input', () => {
+    settings.lineDarkness = Number(lineDarkness.value);
     scheduleSave();
   });
 

@@ -143,7 +143,9 @@
   // Row tracking aids. PowerTeacher puts each student in tr#std<id> (name in
   // th.student-col, then grade cells) and shades every other row with a
   // translucent gray on the <tr>. Hover outlines the row; dividers are bottom
-  // borders (a heavier one every 5 rows helps counting down the list).
+  // borders (a heavier one every 5 rows helps counting down the list). Their
+  // darkness comes from --ptp-line (set from the teacher's slider); the
+  // every-5 line is 2.5× as dark so it always stands out, capped at 85% black.
   const ROW_HOVER_CLASS = 'ptp-row-hover';
   const ROW_LINES_CLASS = 'ptp-row-lines';
   const ROW_FIVES_CLASS = 'ptp-row-fives';
@@ -151,11 +153,11 @@
   const ROW_CSS = `
     html.${ROW_LINES_CLASS} ${STUDENT_ROW} > td,
     html.${ROW_LINES_CLASS} ${STUDENT_ROW} > th {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.18) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, var(--ptp-line, 0.18)) !important;
     }
     html.${ROW_FIVES_CLASS} ${STUDENT_ROW}:nth-child(5n) > td,
     html.${ROW_FIVES_CLASS} ${STUDENT_ROW}:nth-child(5n) > th {
-      border-bottom: 2px solid rgba(0, 0, 0, 0.5) !important;
+      border-bottom: 2px solid rgba(0, 0, 0, min(calc(var(--ptp-line, 0.18) * 2.5), 0.85)) !important;
     }
     html.${ROW_HOVER_CLASS} ${STUDENT_ROW}:hover > td,
     html.${ROW_HOVER_CLASS} ${STUDENT_ROW}:hover > th {
@@ -356,6 +358,7 @@
     root.toggle(ROW_LINES_CLASS, settings.enabled && ['every', 'both'].includes(settings.rowDividers));
     root.toggle(ROW_FIVES_CLASS, settings.enabled && ['five', 'both'].includes(settings.rowDividers));
     root.toggle(COMMENT_BADGE_CLASS, settings.enabled && settings.commentBadge);
+    document.documentElement.style.setProperty('--ptp-line', String(settings.lineDarkness / 100));
   }
 
   function useSettings(newSettings) {

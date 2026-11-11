@@ -22,15 +22,15 @@ Expect a review time of **a few days to about 2 weeks**. The wildcard site patte
 | Area | Policy | Status | Notes |
 |---|---|---|---|
 | Name and branding | Impersonation / intellectual property | ⚠️→✅ Fixed | "PowerSchool Enhancer" read as an official PowerSchool product. Renamed to **Gradebook Enhancer for PowerTeacher Pro**; "for <product>" is how compatibility is normally stated. The summary, options page, description and privacy policy all say it isn't affiliated with PowerSchool. The icon uses no PowerSchool logo or colors. |
-| Single purpose | Single-purpose policy | ✅ | Everything serves one job: coloring the PowerTeacher scoresheet. The demo page supports that purpose. |
-| Permissions | Use the narrowest permissions | ✅ | Only `storage`. No `tabs`, `scripting`, `<all_urls>` or `host_permissions`. The content script is limited to `/teachers/*`. `chrome.tabs.create` (popup → demo) needs no permission. |
+| Single purpose | Single-purpose policy | ✅ | Everything serves one job: coloring the PowerTeacher scoresheet. The unlinked demo page exists only so reviewers can test it. |
+| Permissions | Use the narrowest permissions | ✅ | Only `storage`. No `tabs`, `scripting`, `<all_urls>` or `host_permissions`. The content script is limited to `/teachers/*`. |
 | Site access | Broad host access gets extra review | 🟡 Low risk | `https://*.powerschool.com/teachers/*` is a wildcard subdomain because every district has its own. The justification text is ready in LISTING.md. |
 | Remote code | MV3 ban on remote code | ✅ | No `eval`, `new Function`, remote `<script>` or fetched code. `injected.js` is packaged with the extension and loaded with `chrome.runtime.getURL`. |
 | Page-script injection | Not banned, but reviewers look at it | ⚠️→✅ Fixed | `injected.js` wraps `XMLHttpRequest.send` in the page. **Before:** it re-broadcast every JSON response, including student data, as a page event. **Now:** it pulls out only assignment ID → points pairs and sends nothing else, and it no longer wraps `open()`. content.js also re-validates those pairs. A reviewer reading the file can see the data is reduced to point values. |
 | User data / privacy | User Data Policy, Limited Use | ✅ | No collection, transmission, analytics or third parties. Settings use `chrome.storage.sync` and contain no student data. The privacy policy (PRIVACY.md) matches the code exactly, which is what Google checks. |
 | Privacy policy | Required when an extension handles user data | ✅ Ready | You publish PRIVACY.md as a Google Sites page (see the steps below). Its contact email still needs filling in. |
 | Data disclosure form | Must match real behavior | ✅ | Leave every data type unchecked; see the note below. |
-| Functionality / testability | "Minimum functionality" and reviewers able to verify the extension works | ⚠️→✅ Fixed | Reviewers can't sign in to PowerTeacher. The new **demo page** (`demo.html`) runs the real content.js, injected.js and settings on a made-up class, and test instructions are written. Without it, "could not verify functionality" was a real rejection risk. |
+| Functionality / testability | "Minimum functionality" and reviewers able to verify the extension works | ⚠️→✅ Fixed | Reviewers can't sign in to PowerTeacher. The **demo page** (`demo.html`) runs the real content.js, injected.js and settings on a made-up class. It ships unlinked (no menu entry for teachers); the test instructions give reviewers its chrome-extension:// address. Remember to fill in the real extension ID after the first upload. Without it, "could not verify functionality" was a real rejection risk. |
 | Listing quality | Spam, keyword stuffing, misleading claims | ✅ | The description is plain, lists real features and repeats no keywords. The screenshots show the real UI with made-up students only. |
 | Required assets | Icon, 1+ screenshot | ✅ | 128 icon, four 1280×800 screenshots, and a 440×280 promo tile. The manifest now declares icons; it had none before, which would have shown a generic puzzle piece. |
 | Code quality | Readable, not obfuscated | ✅ | Plain, commented source with no minification or build step. |
@@ -59,7 +59,7 @@ Expect a review time of **a few days to about 2 weeks**. The wildcard site patte
 - [ ] Load `extension/` unpacked in Chrome and try it on a real scoresheet:
   - [ ] colors appear
   - [ ] popup and options save
-  - [ ] the popup's demo button opens the demo
+  - [ ] chrome-extension://<ID>/demo.html opens the demo
   - [ ] "Turn on all highlight types" works
 - [ ] Create the privacy page on your Google Site from PRIVACY.md and fill in the contact email.
 - [ ] Build the zip: `py tools/package.py` → `dist/gradebook-enhancer-1.0.zip`.

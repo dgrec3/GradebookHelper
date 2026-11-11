@@ -15,9 +15,9 @@ All extension code lives in `extension/`, which is the folder to load in Chrome.
 | `content.js` | Applies highlight classes to grade cells; rebuilds CSS on settings change |
 | `injected.js` | Page-context XHR wrapper; relays only assignment ID → points possible to content.js |
 | `popup.html/js` | Quick toggles (on/off, final grade, flags) + band summary |
-| `options.html/js`, `band-editor.js` | Full editor |
+| `options.html/js`, `band-editor.js`, `color-picker.js` | Full editor; band ladder; 16-color palette picker with "More colors…" |
 | `ui.css` | Shared popup/options styles (light + dark) |
-| `demo.html/js`, `demo-data.json` | PowerTeacher look-alike scoresheet (made-up class of 19) that runs the real highlighting; for teachers, reviewers and store screenshots |
+| `demo.html/js`, `demo-data.json` | PowerTeacher look-alike scoresheet (made-up class of 19) that runs the real highlighting. Ships **unlinked**: for reviewers (address in the test instructions), our testing and store screenshots |
 | `icons/` | 16/32/48/128 icons drawn by `tools/make_icons.py` |
 
 Root (not packaged): `FEATURES.md`, `CHANGELOG.md`, `STRATEGIES_THAT_WONT_WORK.md`, `PRIVACY.md`, `STORE_REVIEW.md`, `store/` (listing, screenshots, promo tile), `tools/` (`make_icons.py`, `make_screenshots.py`, `package.py` → `dist/`, which is gitignored).
@@ -49,12 +49,15 @@ Root (not packaged): `FEATURES.md`, `CHANGELOG.md`, `STRATEGIES_THAT_WONT_WORK.m
 - Text flag tags: CSS checked live on 2026-11-10 on the 2(M-F) Calculus scoresheet (section 74017), in the DELL-GEMINI (work) Chrome profile, by pasting it into the page. Single tags and stacked pairs looked right; the pair was simulated by unhiding a flag icon, and the page was reloaded afterward. **Not yet run from the installed extension.**
 - Demo page (v1.03): rendered over localhost with a chrome.* shim; every highlight type (bands, M code, final grade, flag tags) rendered correctly through the real injected.js relay. **Not yet opened as an installed extension page.**
 
+- Band ladder editor (2026-11-10, branch v1.05): band 1 starts at 0, each start = previous end (auto), only ends typed, switch a band off for an uncolored range, no move buttons; example scores, "Covers" lines, 0–100% bar, per-row warnings. Schema 2: `migrate` runs `toLadder` once on older saves. Tested in the options page over localhost: an end of 65 moved the next start; unchecking a band striped its range; Add band stacked "90% and up"; an end below the start warned and tinted the row.
+
 ## Regenerating store images
 `py tools/make_screenshots.py` (plain `py`, because PIL needs user site-packages). It copies `extension/` to a temp folder, adds a chrome.* storage shim with presets (default / bands / all), serves it on 127.0.0.1:8766, and captures the demo (`?shot`) and options pages with headless **Edge** at 960x600 CSS px × 4/3 scale, then composes `store/screenshot-1..4` and the promo tile. Headless Chrome exits with code 21 on this machine.
 
 ## Next steps
-1. Reload the unpacked `extension` folder in Chrome and smoke-test on a real scoresheet: colors, popup and options saving, the popup's demo button, and "Turn on all highlight types". Then commit and push v1.03, and merge it to main.
+1. Reload the unpacked `extension` folder in Chrome and smoke-test on a real scoresheet: colors, tags, row lines, popup and options saving. Open `chrome-extension://<ID>/demo.html` to check the reviewer demo.
    - Publish PRIVACY.md as a page on sites.google.com/view/dg3dev and fill in the contact email.
+   - After the first upload, put the real extension ID into the reviewer test instructions in `store/LISTING.md` (EXTENSION_ID placeholder).
    - Run `py tools/package.py`, then submit using `store/LISTING.md`.
 2. ~~Confirm what an `M` looks like on an assignment.~~ Answered by the user on 2026-11-10: Medical (M) **can only be entered in the course grade cell**, never on assignments. Final-grade M is read from `.final-grade-info .grade`.
    - Possible upgrade: auto-discover each district's codes from the grade_scale XHR and offer them as presets.

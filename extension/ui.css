@@ -142,9 +142,6 @@ input[type="color"] {
 }
 #final-bands { margin-top: 8px; }
 
-.issues { margin: 10px 0 0; padding-left: 18px; color: var(--warn-text); }
-.issues:empty { display: none; }
-.issues li { background: var(--warn-bg); padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; }
 
 .actions { max-width: 680px; margin: 0 auto; text-align: right; }
 
@@ -157,7 +154,6 @@ input[type="color"] {
 .summary-row { display: flex; align-items: center; gap: 8px; }
 .muted-section { opacity: 0.45; pointer-events: none; }
 
-.popup-page .demo-button { width: 100%; margin-top: 6px; }
 .page-header a { color: var(--accent); }
 
 /* Preview of the in-gradebook text tag (same look content.js applies). */
@@ -169,3 +165,57 @@ input[type="color"] {
 .strength-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; flex-wrap: wrap; }
 .strength-row input[type=range] { flex: 1; min-width: 140px; max-width: 280px; }
 .strength-value { min-width: 3em; font-variant-numeric: tabular-nums; }
+
+/* ── Band editor: 0–100% bar, covers line, row warnings ─────────── */
+.band-bar-wrap { margin: 4px 0 26px; }
+.band-bar {
+  display: flex; height: 18px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+  background: var(--card);
+}
+.band-segment { height: 100%; }
+.band-segment + .band-segment { box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.25); }
+.band-segment.gap {
+  background: repeating-linear-gradient(135deg, #e4e7eb 0 4px, #f5f7fa 4px 8px);
+}
+.band-ticks { position: relative; height: 16px; }
+.band-tick {
+  position: absolute; top: 3px; transform: translateX(-50%);
+  font-size: 11px; color: var(--muted-text); font-variant-numeric: tabular-nums;
+}
+.band-tick.first { transform: none; }
+.band-tick.last { transform: translateX(-100%); }
+
+.band-item { padding: 6px 8px; border-radius: 6px; }
+.band-item.has-warning { background: var(--warn-bg); }
+.band-item.has-warning .range input { border-color: #d97706; }
+.range-word { color: var(--muted-text); }
+.band-coverage { margin: 4px 0 0 30px; font-size: 12px; color: var(--muted-text); }
+.band-warnings { margin: 2px 0 0 30px; padding-left: 16px; font-size: 12px; color: var(--warn-text); }
+.band-warnings:empty { display: none; }
+/* Starts are filled in automatically: shown, but clearly not editable. */
+.range input.auto-start { background: var(--bg); color: var(--muted-text); border-style: dashed; cursor: default; }
+.band-item.band-off .band-coverage { font-style: italic; }
+
+/* ── Palette color picker (color-picker.js) ─────────────────────── */
+.color-picker { position: relative; display: inline-flex; }
+.color-button {
+  width: 38px; height: 28px; padding: 0; border: 1px solid var(--border); border-radius: 4px;
+  box-shadow: inset 0 0 0 2px var(--card); cursor: pointer;
+}
+.color-panel {
+  position: absolute; top: calc(100% + 4px); right: 0; z-index: 20;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18); padding: 8px; width: 156px;
+}
+.color-grid { display: grid; grid-template-columns: repeat(4, 30px); gap: 6px; }
+.color-chip {
+  width: 30px; height: 30px; padding: 0; border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px; cursor: pointer;
+}
+.color-chip:hover, .color-chip:focus-visible { transform: scale(1.1); }
+.color-chip.selected { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent); }
+.color-more {
+  display: block; width: 100%; margin-top: 8px; padding: 5px 0; font-size: 12px;
+  background: none; border: 1px solid var(--border); border-radius: 4px; color: var(--text); cursor: pointer;
+}
+.color-custom-input { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }

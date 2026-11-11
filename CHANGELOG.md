@@ -4,6 +4,18 @@
 First public release (manifest version `1.0`). It includes all the work below, which was built as pre-release 2.0.0 and 2.1.0. Those numbers were never published.
 
 ### Chrome Web Store prep (branch v1.03)
+- **Demo page is now hidden:** it still ships (so Chrome Web Store reviewers can test without a PowerTeacher login), but the popup button and the settings-page link are gone. The reviewer test instructions give its chrome-extension:// address.
+- Settings: "Outline the row under the mouse" → "Outline the row when you hover over it".
+- **Line darkness slider** under "Row lines" (Lighter ↔ Darker, 10–40% black, default 18 = the old look). It drives a `--ptp-line` CSS variable; the every-5 line is 2.5× as dark, capped at 85%. It's grayed out when row lines are off.
+- **Palette color picker** (`color-picker.js`) for bands and score codes: clicking a color opens 16 standard highlight colors (including the defaults), with the current one ringed and the color names on hover. "More colors…" opens Chrome's full picker. Esc or clicking outside closes it.
+- **Clearer band editor:**
+  - Each row reads "From [0]% up to, but not including, [70]%", with a "Covers 0% – 69.99%" line under it.
+  - The preview box shows a real example score (the highest whole score the band colors: 69, 79, or the start of an open band, 80) instead of always 85.
+  - A 0–100% bar above the bands shows each color with its edges marked; switched-off ranges are striped gray.
+  - **Bands are a ladder (schema 2):** band 1 always starts at 0%, and each later band starts where the one before ends (filled in as you type; start boxes are read-only). Teachers only type each band's end, and the last band can be "and up". Gaps and overlaps can't happen; a range meant to stay uncolored is a band that's switched off. The up/down buttons are gone. "+ Add band" stacks a band on top.
+  - Warnings appear on the affected row (tinted): a middle band with no end, or an end that isn't above its start.
+  - Settings saved before the ladder are converted once (`toLadder`): sorted low to high, old gaps kept as switched-off bands, overlaps trimmed.
+  - Logic lives in `PTPSettings.analyzeBands` / `toLadder` (replaces `describeBandIssues`).
 - **New defaults** (new installs and Reset): bands red <70, yellow 70–80, **green 80+**; **final grade column on**, using the assignment bands; row lines **under every row** (no heavy every-5 line); color strength 70%, row hover on, flag tags on (filled, single letters), comment badge on, M = Medical listed but off. Teachers with saved settings keep their choices.
 - **Removed: flag colors and split (multi-color) cells.** With the clear flag tags, extra colors per flag were noise. Each cell now gets at most one color: a matching score code (e.g. M = Medical), otherwise its band. The settings page loses the "Multiple matches" card and the flag color rows, and the popup loses those toggles. Settings saved by earlier builds still load; their `flags` and `multiHighlight` keys are dropped. The content script no longer watches flag-icon class changes, because colors don't depend on flags.
 - **Renamed** to "Gradebook Enhancer for PowerTeacher Pro" (short name "Gradebook Enhancer"). "PowerSchool Enhancer" read as an official PowerSchool product, which is a trademark/impersonation rejection risk. Added "not affiliated with PowerSchool" lines.

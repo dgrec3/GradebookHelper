@@ -132,7 +132,7 @@ def main():
             in_action = shoot(shots, "in-action", "demo.html?shot&preset=default", 960, 600, scale)
             bands = shoot(shots, "bands", "demo.html?shot&preset=bands", 960, 600, scale)
             flags = shoot(shots, "flags", "demo.html?shot&preset=all", 960, 600, scale)
-            options = shoot(shots, "options", "options.html?preset=all", 600, 900, 1)
+            options = shoot(shots, "options", "options.html?preset=all", 720, 1100, 1)
         finally:
             server.shutdown()
 
@@ -141,9 +141,11 @@ def main():
     save(flags, "screenshot-3-flags.png")
 
     # 4: settings page floating over the right side of the default scoresheet,
-    # cropped just below the "Multiple matches" card so no card is cut in half.
-    settings_window = options.crop((0, 0, 600, 640))
-    save(float_window(in_action.copy(), settings_window, 1280 - 600 - 28, 70), "screenshot-4-settings.png")
+    # cropped to the "Rows & colors" and "Assignment highlights" cards (range
+    # bar, wording, example scores) so no card is cut in half.
+    # Captured 720px wide so band rows don't wrap; y 156–874 holds both cards.
+    settings_window = options.crop((0, 156, 720, 874))
+    save(float_window(in_action.copy(), settings_window, 1280 - 720 - 28, 36), "screenshot-4-settings.png")
 
     # Small promo tile.
     tile = Image.new("RGB", (440, 280), "#1f3a5f")

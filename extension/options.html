@@ -10,7 +10,6 @@
     <h1>Gradebook Enhancer</h1>
     <p class="subtitle">Grade highlighting for PowerTeacher Pro scoresheets · Not affiliated with PowerSchool</p>
     <span id="save-status" class="save-status" aria-live="polite"></span>
-    <p class="hint"><a href="demo.html" target="_blank">Try your settings on a sample gradebook</a></p>
   </header>
 
   <main>
@@ -34,7 +33,7 @@
       </p>
       <label class="switch-row">
         <input type="checkbox" id="row-hover">
-        <span>Outline the row under the mouse</span>
+        <span>Outline the row when you hover over it</span>
       </label>
       <div class="strength-row">
         <label for="row-dividers">Row lines</label>
@@ -45,13 +44,21 @@
           <option value="both">Both</option>
         </select>
       </div>
+      <div class="strength-row" id="line-darkness-row">
+        <label for="line-darkness">Line darkness</label>
+        <span class="range-word">Lighter</span>
+        <input type="range" id="line-darkness" min="10" max="40" step="2">
+        <span class="range-word">Darker</span>
+      </div>
     </section>
 
     <section class="card">
       <h2>Assignment highlights</h2>
       <p class="hint">
-        A score is in a band when it is at least <b>Min</b> and below <b>Max</b>.
-        Leave Max blank for "and above". The first matching band from the top wins.
+        Bands go from lowest to highest. The first band starts at 0%; type where each band
+        ends, and the next band starts there automatically (a score of exactly 70 belongs
+        to the band that <b>starts</b> at 70). Leave the last band's end blank for "and up".
+        Uncheck a band to leave its range uncolored.
       </p>
       <div id="assignment-bands"></div>
     </section>
@@ -120,6 +127,7 @@
   </main>
 
   <script src="settings.js"></script>
+  <script src="color-picker.js"></script>
   <script src="band-editor.js"></script>
   <script src="options.js"></script>
 </body>

@@ -97,12 +97,6 @@
     persist();
   });
 
-  // The demo is an extension page, so it opens in a normal tab.
-  document.getElementById('open-demo').addEventListener('click', () => {
-    chrome.tabs.create({ url: chrome.runtime.getURL('demo.html') });
-    window.close();
-  });
-
   document.getElementById('open-options').addEventListener('click', () => {
     chrome.runtime.openOptionsPage();
     window.close();

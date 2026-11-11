@@ -1,7 +1,8 @@
 /**
  * Demo page: builds a made-up class in the look and markup of PowerTeacher
- * Pro's scoresheet, so teachers (and Chrome Web Store reviewers, who can't sign
- * in to PowerTeacher) can see the highlighting work. Also used for the store
+ * Pro's scoresheet. It ships with the extension but nothing links to it:
+ * it's for Chrome Web Store reviewers (who can't sign in to PowerTeacher; the
+ * test instructions give them its address), our own testing, and the store
  * screenshots (add ?shot to hide the demo banner).
  *
  * The class data is loaded with a real XMLHttpRequest on purpose: content.js
