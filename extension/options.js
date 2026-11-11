@@ -1,5 +1,6 @@
 /**
- * Full settings page: band editors, final grade options, flag colors.
+ * Full settings page: band editors, final grade, score codes, row aids and
+ * flag tag options.
  * Every edit saves automatically (debounced so dragging a color picker
  * doesn't hit chrome.storage.sync's write-rate limit).
  */
@@ -14,9 +15,7 @@
   const finalSame = document.getElementById('final-same');
   const finalOptions = document.getElementById('final-options');
   const finalBandsContainer = document.getElementById('final-bands');
-  const flagsContainer = document.getElementById('flags');
   const scoreCodesContainer = document.getElementById('score-codes');
-  const multiEnabled = document.getElementById('multi-enabled');
   const flagTags = document.getElementById('flag-tags');
   const flagTagStyle = document.getElementById('flag-tag-style');
   const flagTagLength = document.getElementById('flag-tag-length');
@@ -25,9 +24,6 @@
   const rowHover = document.getElementById('row-hover');
   const rowDividers = document.getElementById('row-dividers');
   const commentBadge = document.getElementById('comment-badge');
-  const multiMax = document.getElementById('multi-max');
-  const multiOptions = document.getElementById('multi-options');
-  const multiPreview = document.getElementById('multi-preview-swatch');
   const saveStatus = document.getElementById('save-status');
 
   const assignmentEditor = createBandEditor(document.getElementById('assignment-bands'), bands => {
@@ -52,53 +48,6 @@
         console.error('[Gradebook Enhancer] Save failed.', error);
       }
     }, SAVE_DEBOUNCE_MS);
-  }
-
-  function renderFlags() {
-    flagsContainer.replaceChildren();
-    PTPSettings.FLAG_DEFINITIONS.forEach(def => {
-      const flag = settings.flags[def.key];
-      const row = document.createElement('div');
-      row.className = 'flag-row';
-
-      const label = document.createElement('label');
-      label.className = 'switch-row';
-      const toggle = document.createElement('input');
-      toggle.type = 'checkbox';
-      toggle.checked = flag.enabled;
-      const name = document.createElement('span');
-      name.textContent = def.label;
-      label.append(toggle, name);
-
-      const swatch = document.createElement('span');
-      swatch.className = 'swatch';
-      swatch.textContent = '85';
-
-      const color = document.createElement('input');
-      color.type = 'color';
-      color.value = flag.color;
-      color.setAttribute('aria-label', `${def.label} color`);
-
-      function paint() {
-        PTPSettings.paintSwatch(swatch, flag.color, settings.colorStrength);
-        swatch.classList.toggle('muted', !flag.enabled);
-      }
-
-      toggle.addEventListener('change', () => {
-        flag.enabled = toggle.checked;
-        paint();
-        scheduleSave();
-      });
-      color.addEventListener('input', () => {
-        flag.color = color.value;
-        paint();
-        scheduleSave();
-      });
-
-      paint();
-      row.append(label, swatch, color);
-      flagsContainer.append(row);
-    });
   }
 
   function renderScoreCodes() {
@@ -203,27 +152,7 @@
     finalBandsContainer.hidden = settings.finalGrade.useAssignmentBands;
   }
 
-  // The preview shows real colors in display order (first band, Late, first
-  // score code), cut to the chosen number of segments.
-  function renderMultiHighlight() {
-    multiEnabled.checked = settings.multiHighlight.enabled;
-    multiMax.value = String(settings.multiHighlight.max);
-    multiOptions.classList.toggle('muted-section', !settings.multiHighlight.enabled);
-
-    const sampleColors = [
-      settings.assignmentBands[0]?.color || '#ff4d4d',
-      settings.flags.late.color,
-      settings.scoreCodes[0]?.color || settings.flags.absent.color
-    ].slice(0, settings.multiHighlight.max);
-    const share = 100 / sampleColors.length;
-    multiPreview.style.background = `linear-gradient(to right, ${sampleColors
-      .map(color => PTPSettings.blendOverWhite(color, settings.colorStrength))
-      .map((color, index) => `${color} ${index * share}% ${(index + 1) * share}%`)
-      .join(', ')})`;
-  }
-
   function renderAll() {
-    renderMultiHighlight();
     enabledInput.checked = settings.enabled;
     flagTags.checked = settings.flagTags;
     flagTagStyle.value = settings.flagTagStyle;
@@ -238,7 +167,6 @@
     assignmentEditor.render(settings.assignmentBands);
     finalEditor.render(settings.finalGrade.bands);
     renderScoreCodes();
-    renderFlags();
     renderFinalVisibility();
   }
 
@@ -281,18 +209,6 @@
 
   flagTags.addEventListener('change', () => {
     settings.flagTags = flagTags.checked;
-    scheduleSave();
-  });
-
-  multiEnabled.addEventListener('change', () => {
-    settings.multiHighlight.enabled = multiEnabled.checked;
-    renderMultiHighlight();
-    scheduleSave();
-  });
-
-  multiMax.addEventListener('change', () => {
-    settings.multiHighlight.max = Number(multiMax.value);
-    renderMultiHighlight();
     scheduleSave();
   });
 

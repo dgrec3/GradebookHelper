@@ -3,7 +3,7 @@
   "name": "Gradebook Enhancer for PowerTeacher Pro",
   "short_name": "Gradebook Enhancer",
   "version": "1.0",
-  "description": "Color-code PowerTeacher Pro scoresheet grades with your own thresholds, flag colors and split highlights. Not by PowerSchool.",
+  "description": "Color-code PowerTeacher Pro scoresheet grades with your own thresholds, plus clear flag tags and row guides. Not by PowerSchool.",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",

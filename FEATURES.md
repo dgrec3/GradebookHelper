@@ -23,24 +23,17 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
   - When it's turned off, the final grade gets its own band list, pre-filled with a copy of the assignment bands.
 - ☑ Selector `td.final-grade-info-cell`; percent read from `.final-grade-info .percent`.
 
-## 3. Special score codes (each with toggle + color)
-- ☑ **Exempt**, **Missing**, **Incomplete**, **Absent**, **Late** (Medical: see note below). Each gets its own enable toggle and color picker. Colors can repeat.
-- ☑ Default: all off. Suggested starting colors are preset.
-- **Precedence:** if a cell has an enabled code flag, the code color wins over the score band (e.g. a Missing 0 shows the Missing color, not red).
-- ☑ Flags detected as visible (`:not(.ng-hide)`) icon spans. Absent and Late added. Medical is not a flag; it's score code `M` (see section 3b).
-- ☑ Non-numeric or blank scores with no enabled code stay uncolored, as today.
+## 3. Flag colors (removed 2026-11-10)
+- ~~Exempt / Missing / Incomplete / Absent / Late each with a toggle and color.~~ Removed: the text flag tags (8b) show flags more clearly than colors did. Flags never change a cell's color now.
 
 ## 3b. Score codes
 - ☑ Editable list: code text, label, color, toggle (max 20). Pre-filled with `M` = Medical (off).
 - ☑ Matches the cell's displayed text (assignment score / final letter grade), case-insensitive.
-- **Precedence:** score code > flag > score band.
-- ☐ Verify an `M` entered on an assignment shows as text "M".
+- **Precedence:** score code > score band (one color per cell).
+- ☑ Medical (M) can only be entered in the course grade cell (confirmed by the user).
 
-## 3c. Split highlighting (v1.0)
-- ☑ A cell meeting several conditions gets equal left-to-right stripes (max 2 or 3; default on, 3).
-- ☑ Order: grade band → Late/Missing → other codes and flags. Split off = single color, code → flag → band.
-- ☑ Rendered as a hard-stop `linear-gradient(to right, …)` via per-cell CSS variables.
-- ☑ Mixed text contrast → black text with white halo.
+## 3c. Split highlighting (removed 2026-11-10)
+- ~~Cells meeting several conditions split into 2–3 colored stripes.~~ Removed together with flag colors: with only bands and score codes left, a cell never needs more than one color.
 
 ## 4. Readability
 - ☑ Text color is picked automatically (black or white) from the background's luminance (WCAG relative-luminance formula, threshold ≈ 0.179).
@@ -84,6 +77,8 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 - ☑ `commentBadge` (default on): class `ptp-comment-badge` on `<html>`. `span.ps-notes-flag:not(.ng-hide)` gets a white background, `opacity: 1`, and a white-then-navy ring shadow.
 
 ## 9. Demo page
+- ☑ Looks like PowerTeacher Pro's scoresheet (measured styles; made-up class); `?shot` hides the banner for screenshots.
+- ☑ Store screenshots: `py tools/make_screenshots.py` (settings presets default / bands / all via a test-only storage shim).
 - ☑ `demo.html` + `demo.js` + `demo-data.json`: ten made-up students and six assignments in PowerTeacher Pro markup (same td classes, `var` scores, flag icons with `ng-hide`, final-grade `.grade`/`.percent`).
 - ☑ Loads its data with a real XHR, so it goes through injected.js → points relay → content.js exactly like PowerTeacher.
 - ☑ Uses the teacher's saved settings and updates live; a "Turn on all highlight types" button enables final grade, every flag and every score code.

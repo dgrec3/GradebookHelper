@@ -11,8 +11,8 @@ Upload `dist/gradebook-enhancer-1.0.zip` (build it with `py tools/package.py`).
 
 **Name** (from the manifest): Gradebook Enhancer for PowerTeacher Pro
 
-**Summary** (from the manifest, 125 of 132 characters):
-Color-code PowerTeacher Pro scoresheet grades with your own thresholds, flag colors and split highlights. Not by PowerSchool.
+**Summary** (from the manifest, 128 of 132 characters):
+Color-code PowerTeacher Pro scoresheet grades with your own thresholds, plus clear flag tags and row guides. Not by PowerSchool.
 
 **Category:** Education
 
@@ -25,9 +25,10 @@ See at a glance which students need attention. Gradebook Enhancer colors the cel
 WHAT IT DOES
 • Score bands: color any score below, between or above the percentages you pick. Add as many bands as you like (for example red below 70%, yellow from 70% to 80%).
 • Final grade column: highlight course grades too, using the same bands or a separate set.
-• Flags: give Late, Missing, Exempt, Incomplete and Absent their own colors. Turn each one on or off.
+• Flag tags: PowerTeacher's tiny colored flag squares become clear letters, always in the same spot: M (missing), I (incomplete), L (late), A (absent) and E (exempt). Full words are an option.
 • Score codes: color your district's special codes, like M for Medical.
-• Split cells: when a cell matches more than one rule (say, a low score that was also turned in late), it is split into two or three colored stripes so you see everything at once.
+• Row guides: soft, see-through colors keep PowerTeacher's row stripes visible, with optional lines under each row (heavier every 5) and an outline on the row under your mouse.
+• Comment badges: cells with comments get a clear badge, so notes don't disappear on colored cells.
 • Readable text: text automatically switches between black and white to stay readable on any color.
 • Live updates: changes in settings show up on your open scoresheet right away. No reload needed.
 
@@ -43,11 +44,11 @@ PowerTeacher Pro scoresheets on powerschool.com addresses (https://yourdistrict.
 Gradebook Enhancer is an independent tool for teachers. It is not affiliated with, endorsed by or sponsored by PowerSchool. PowerSchool and PowerTeacher are trademarks of their respective owners.
 ```
 
-**Graphic assets** (all in `store/`):
+**Graphic assets** (all in `store/`, rebuilt with `py tools/make_screenshots.py`):
 | Field | File |
 |---|---|
 | Store icon (128×128) | `store-icon-128.png` |
-| Screenshots (1280×800, in this order) | `screenshot-1-scoresheet.png`, `screenshot-2-popup.png`, `screenshot-3-settings.png`, `screenshot-4-codes-flags.png` |
+| Screenshots (1280×800, in this order) | `screenshot-1-in-action.png` (default settings), `screenshot-2-bands.png` (custom bands + final grade), `screenshot-3-flags.png` (flag letters, comment badges, Medical code, final grade), `screenshot-4-settings.png` (settings page beside the scoresheet) |
 | Small promo tile (440×280) | `promo-small-440x280.png` |
 | Marquee promo tile | optional, skip |
 
@@ -61,12 +62,12 @@ Gradebook Enhancer is an independent tool for teachers. It is not affiliated wit
 
 **Single purpose description:**
 ```
-Highlights cells in the PowerTeacher Pro gradebook scoresheet with teacher-chosen colors based on score thresholds, PowerTeacher flags (late, missing, exempt, incomplete, absent) and special score codes, so teachers can spot grades that need attention.
+Highlights cells in the PowerTeacher Pro gradebook scoresheet with teacher-chosen colors based on score thresholds and special score codes, and makes the scoresheet easier to read (clear flag tags, comment badges, row guides), so teachers can spot grades that need attention.
 ```
 
 **Permission justification — storage:**
 ```
-Saves the teacher's highlight settings (color bands, thresholds, flag and score-code colors, on/off switches) with chrome.storage.sync. No student data or page content is stored.
+Saves the teacher's highlight settings (color bands, thresholds, score-code colors, display options and on/off switches) with chrome.storage.sync. No student data or page content is stored.
 ```
 
 **Permission justification — host permission** (content script on `https://*.powerschool.com/teachers/*`):
@@ -93,7 +94,7 @@ PowerTeacher Pro requires a school district teacher login, which we cannot share
 1. Install the extension and click its toolbar icon.
 2. Click "See it on a sample gradebook" (or open the options page and click "Try your settings on a sample gradebook").
 3. The sample scoresheet shows score bands (red below 70%, yellow 70–80%) by default.
-4. Click "Turn on all highlight types" to see flag colors, the M (Medical) score code, final-grade highlighting and split (multi-color) cells.
+4. Click "Turn on all highlight types" to see the M (Medical) score code and final-grade highlighting. Flag letters (M, I, L, A, E) and comment badges show by default.
 5. Click "Open settings" and change any color or threshold. The sample scoresheet updates immediately.
 
 The content script only runs on https://*.powerschool.com/teachers/* pages. It makes no network requests of its own and does not load remote code.

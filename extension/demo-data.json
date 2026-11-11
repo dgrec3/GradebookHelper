@@ -1,23 +1,32 @@
 {
-  "_note": "Made-up class for the demo page. Medical (M) only appears in the final grade, as in PowerTeacher. Assignment records use the same shape PowerTeacher Pro's API returns, so the real injected.js reads points possible from them.",
+  "_note": "Made-up class for the demo page (no real students). Assignment records use the same shape PowerTeacher Pro's API returns, so the real injected.js reads points possible from them. Medical (M) only appears in the course grade, as in PowerTeacher. category = PowerTeacher's color-N header class (1 blue, 2 teal, 4 red).",
+  "term": "Q1",
   "assignments": [
-    { "assignmentid": 9001, "name": "Unit 1 Quiz",   "_assignmentsections": [{ "scoreentrypoints": 20 }] },
-    { "assignmentid": 9002, "name": "Homework 1.4",  "_assignmentsections": [{ "scoreentrypoints": 10 }] },
-    { "assignmentid": 9003, "name": "Lab: Slopes",   "_assignmentsections": [{ "scoreentrypoints": 25 }] },
-    { "assignmentid": 9004, "name": "Unit 1 Test",   "_assignmentsections": [{ "scoreentrypoints": 100 }] },
-    { "assignmentid": 9005, "name": "Warm-ups Wk 3", "_assignmentsections": [{ "scoreentrypoints": 5 }] },
-    { "assignmentid": 9006, "name": "Project Draft", "_assignmentsections": [{ "scoreentrypoints": 50 }] }
+    { "assignmentid": 9001, "name": "HW 3.1",               "date": "10/6/2026",  "category": 1, "_assignmentsections": [{ "scoreentrypoints": 10 }] },
+    { "assignmentid": 9002, "name": "Quiz 3.1-3.2",         "date": "10/9/2026",  "category": 4, "_assignmentsections": [{ "scoreentrypoints": 25 }] },
+    { "assignmentid": 9003, "name": "HW 3.3",               "date": "10/14/2026", "category": 1, "_assignmentsections": [{ "scoreentrypoints": 10 }] },
+    { "assignmentid": 9004, "name": "Lab: Rates of Change", "date": "10/17/2026", "category": 2, "_assignmentsections": [{ "scoreentrypoints": 20 }] },
+    { "assignmentid": 9005, "name": "Unit 3 Test",          "date": "10/23/2026", "category": 4, "_assignmentsections": [{ "scoreentrypoints": 100 }] }
   ],
   "students": [
-    { "name": "Avery Stone",   "scores": ["19", "10", "24", "93", "5", { "score": "47", "note": true }] },
-    { "name": "Blake Rivera",  "scores": [{ "score": "12", "flags": ["late"] }, "8", "17", "68", "4", { "score": "0", "flags": ["missing"] }] },
-    { "name": "Casey Morgan",  "scores": ["15", { "score": "", "flags": ["exempt"] }, "20", "77", "3", "38"] },
-    { "name": "Devon Patel",   "scores": [{ "score": "", "flags": ["exempt"] }, { "score": "", "flags": ["exempt"] }, "22", { "score": "", "flags": ["exempt"] }, "4", "45"], "finalCode": "M" },
-    { "name": "Emery Brooks",  "scores": ["17", "9", { "score": "13", "flags": ["late", "incomplete"] }, "81", "5", "44"] },
-    { "name": "Finley Chen",   "scores": [{ "score": "11", "flags": ["absent"] }, "6", "18", { "score": "59", "note": true }, "2", "33"] },
-    { "name": "Harper Nguyen", "scores": ["20", "10", "25", "98", "5", "50"] },
-    { "name": "Jordan Ellis",  "scores": ["14", { "score": "0", "flags": ["missing", "late"] }, "19", "74", "4", "36"] },
-    { "name": "Kai Thompson",  "scores": ["16", { "score": "7", "note": true }, "21", "85", { "score": "", "flags": ["incomplete"] }, "41"] },
-    { "name": "Logan Reyes",   "scores": ["10", "5", "12", "52", { "score": "1", "flags": ["missing", "late", "incomplete", "absent"] }, { "score": "18", "flags": ["late"] }] }
+    { "name": "Alvarez, Sofia",   "scores": ["10", "23", "9", "19", "94"] },
+    { "name": "Bennett, Owen",    "scores": [{ "score": "6", "flags": ["late"] }, "16", "7", "13", "64"] },
+    { "name": "Chen, Mia",        "scores": ["9", "21", "10", "18", { "score": "88", "note": true }] },
+    { "name": "Delgado, Lucas",   "scores": ["8", "17", { "score": "0", "flags": ["missing"] }, "15", "71"] },
+    { "name": "Ellison, Grace",   "scores": ["10", "25", "10", "20", "98"] },
+    { "name": "Foster, Jalen",    "scores": ["7", { "score": "14", "flags": ["late", "absent"] }, "8", { "score": "", "flags": ["incomplete"] }, "58"] },
+    { "name": "Garcia, Ava",      "scores": ["9", "20", "9", "17", "83"] },
+    { "name": "Hughes, Noah",     "scores": ["8", "18", "7", "16", { "score": "76", "note": true }] },
+    { "name": "Ibrahim, Layla",   "scores": [{ "score": "", "flags": ["exempt"] }, { "score": "", "flags": ["exempt"] }, { "score": "", "flags": ["exempt"] }, "17", { "score": "", "flags": ["exempt"] }], "finalCode": "M" },
+    { "name": "Jensen, Ethan",    "scores": ["10", "22", "9", "18", "91"] },
+    { "name": "Kowalski, Emma",   "scores": ["5", "15", { "score": "0", "flags": ["missing", "late"] }, "12", "61"] },
+    { "name": "Lopez, Mateo",     "scores": ["9", "19", "8", "16", "79"] },
+    { "name": "Morgan, Chloe",    "scores": ["10", "24", "10", "19", "96"] },
+    { "name": "Nguyen, Ryan",     "scores": ["7", { "score": "17", "note": true }, "8", "14", "72"] },
+    { "name": "Okafor, Zoe",      "scores": ["9", "20", "10", { "score": "18", "flags": ["late"] }, "85"] },
+    { "name": "Patel, Arjun",     "scores": [{ "score": "0", "flags": ["missing", "late", "incomplete", "absent"] }, "12", "6", "11", "55"] },
+    { "name": "Quinn, Harper",    "scores": ["8", "21", "9", "17", "81"] },
+    { "name": "Rossi, Leo",       "scores": ["9", "18", { "score": "7", "flags": ["absent"] }, "15", "74"] },
+    { "name": "Sullivan, Ella",   "scores": ["10", "23", "10", "20", "92"] }
   ]
 }

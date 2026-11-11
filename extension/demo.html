@@ -5,27 +5,90 @@
   <title>Gradebook Enhancer Demo</title>
   <link rel="stylesheet" href="ui.css">
   <style>
-    /* Demo-only look. The table uses PowerTeacher Pro's class names
-       (score-assignment-col, keypad-cell, final-grade-info-cell…) so the real
-       content.js finds and colors these cells exactly as it does in PowerTeacher. */
-    .demo-page { padding: 24px 16px 48px; }
-    .demo-page main, .demo-page .page-header { max-width: 900px; margin: 0 auto; }
-    .demo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .table-wrap { overflow-x: auto; margin-top: 16px; }
-    table.scoresheet { border-collapse: collapse; width: 100%; background: #fff; color: #1f2933; font-size: 14px; }
-    .scoresheet th, .scoresheet td { border: 1px solid #d9e2ec; padding: 0; text-align: center; height: 38px; }
-    .scoresheet th { background: #eef2f7; font-weight: 600; padding: 6px 8px; font-size: 12px; }
-    .scoresheet th small { display: block; font-weight: 400; color: #616e7c; }
-    .scoresheet th.student-col { text-align: left; padding: 0 10px; white-space: nowrap; font-weight: 400; background: none; font-size: 14px; }
-    /* PowerTeacher shades every other student row on the <tr> itself. */
-    .scoresheet tbody tr:nth-child(even) { background: rgba(0, 0, 0, 0.1); }
-    .scoresheet td.keypad-cell { min-width: 74px; position: relative; }
-    .scoresheet a.keypad-link { display: flex; align-items: center; justify-content: center; gap: 4px; height: 100%; color: inherit; text-decoration: none; }
-    .scoresheet var { font-style: normal; }
-    /* Same layout as PowerTeacher (measured 2026-11-10): 8x8 squares in a 2x2
-       grid inside span.flag-container, which covers the cell's top-left.
-       Exempt sits directly in the link. With text tags on, content.js's CSS
-       turns these same spans into tags. */
+    /* Recreates the look of PowerTeacher Pro's scoresheet from measured styles
+       (fonts, sizes, colors; measured 2026-11-10) with made-up students. Nothing
+       is copied from PowerSchool's files. The markup uses PowerTeacher's class
+       names (gridTable, tr#std…, score-assignment-col, keypad-cell,
+       final-grade-info…) so the real content.js colors it exactly as it does
+       the live scoresheet. */
+    body.demo-page {
+      background: #fff; color: #333; margin: 0;
+      font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    /* Demo explanation for teachers; hidden for store screenshots (?shot). */
+    .demo-banner {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+      padding: 10px 16px; background: #f4f6f8; border-bottom: 1px solid #d9e2ec;
+      font: 13px/1.4 system-ui, sans-serif; color: #1f2933;
+    }
+    .demo-banner b { font-weight: 600; }
+    .demo-banner .demo-actions { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+    /* ui.css pins .save-status to the options page header's corner; here it
+       must flow after the buttons or it overlaps them. */
+    .demo-banner .save-status { position: static; white-space: nowrap; }
+    body.shot .demo-banner, body.shot .demo-legend { display: none; }
+
+    .ps-page { padding: 10px 16px 24px; }
+    .ps-title {
+      margin: 0 0 6px; font: 400 26px/31px Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif; color: #333;
+    }
+    .box-round { border: 1px solid rgb(0, 125, 179); border-radius: 5px; margin-bottom: 8px; overflow: hidden; }
+    .summary-row { display: flex; padding: 5px 12px; gap: 12px; }
+    .summary-row > span { flex: 1; }
+    .summary-row b { font-weight: 700; }
+    .summary-row .show-more { flex: 0; white-space: nowrap; font-size: 9px; color: #333; }
+    .column-summary-bar { background: rgba(80, 166, 194, 0.4); padding: 4px 12px 6px; display: flex; }
+    .column-summary-bar > span { flex: 1; }
+    .column-summary-bar .divider { margin: 0 4px; color: #777; }
+
+    table.gridTable { border-collapse: collapse; font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #333; }
+    .gridTable th, .gridTable td { padding: 0 0 0 3px; border-right: 1px solid #ccc; }
+    .gridTable tr > :first-child { border-left: 1px solid #ccc; }
+
+    /* Mean / Median / Mode rows above the header. */
+    .gridTable tr.metrics > th { font-weight: 300; font-size: 12px; line-height: 13.2px; padding: 1px 2px; height: 14px; }
+    .gridTable tr.metrics:nth-child(even) { background: rgba(0, 0, 0, 0.1); }
+    .gridTable tr.metrics .course-metric { display: flex; gap: 30px; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+
+    /* Column headers. Category colors are a 3px bar under a 10% tint, like PowerTeacher. */
+    .gridTable tr.header-row { background: rgba(0, 0, 0, 0.1); }
+    .gridTable tr.header-row > th {
+      height: 45px; font-weight: 300; text-transform: uppercase; border-right: 1px solid #fff;
+      vertical-align: middle; line-height: 12.65px;
+    }
+    .gridTable th.student-col.header, .gridTable th.course-grade-header { background: rgba(22, 139, 183, 0.1); }
+    .gridTable th.student-col.header { text-align: left; }
+    .gridTable th.category { width: 100px; min-width: 100px; max-width: 100px; padding: 0 2px; }
+    .gridTable th.category .assignment-name { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gridTable th.category .chevron {
+      display: block; width: 12px; height: 8px; margin: 2px auto 0;
+      background: no-repeat center / 12px 8px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5l4.5 4.5 4.5-4.5' fill='none' stroke='%23444' stroke-width='2.2'/%3E%3C/svg%3E");
+    }
+    .color-1 { background: linear-gradient(to top, rgb(0, 136, 184) 3px, rgba(0, 136, 184, 0.1) 3px); }
+    .color-2 { background: linear-gradient(to top, rgb(19, 143, 140) 3px, rgba(19, 143, 140, 0.1) 3px); }
+    .color-4 { background: linear-gradient(to top, rgb(226, 72, 84) 3px, rgba(226, 72, 84, 0.1) 3px); }
+
+    /* Student rows: 18px tall, every other row shaded on the <tr>. */
+    .gridTable tbody tr { height: 18px; }
+    .gridTable tbody tr:nth-child(even) { background: rgba(0, 0, 0, 0.1); }
+    .gridTable th.student-col { width: 247px; min-width: 247px; text-align: left; font-weight: 700; white-space: nowrap; }
+    .gridTable th.student-col .student-name { padding-left: 3px; }
+    .gridTable var { font-style: normal; }
+    .gridTable td.keypad-cell { position: relative; height: 18px; color: #000; }
+    .gridTable td.score-assignment-col { width: 97px; min-width: 97px; text-align: center; }
+    .gridTable a.keypad-link { color: #000; text-decoration: none; }
+    .gridTable td.final-grade-info-cell { width: 172px; min-width: 172px; }
+    .final-grade-info { display: flex; width: 148px; margin: 0 auto; }
+    .final-grade-grade-container { display: flex; width: 81px; }
+    .final-grade-info .grade { width: 34px; text-align: center; }
+    .final-grade-info .percent { width: 42px; text-align: right; }
+    .final-grade-info .points { width: 67px; text-align: right; }
+
+    /* PowerTeacher's flag squares: 8x8 in a 2x2 grid inside span.flag-container
+       (measured). With text tags on, content.js turns these spans into tags. */
     .flag-container { position: absolute; top: 1px; left: 1px; width: 16px; height: 16px; }
     .ps-icon { position: absolute; width: 8px; height: 8px; }
     .ps-icon.ng-hide { display: none; }
@@ -33,49 +96,45 @@
     .ps-late-flag { top: 0; left: 8px; background: #d9363e; }
     .ps-incomplete-flag { top: 8px; left: 0; background: rgb(0, 125, 179); }
     .ps-absent-flag { top: 8px; left: 8px; background: rgb(93, 181, 70); }
-    .ps-exempt-flag-purple { top: 1px; right: 1px; background: #8e44ad; }
+    .ps-exempt-flag-purple { top: 5px; left: 3px; background: #8e44ad; }
     /* Stand-in for PowerTeacher's comment sprite: a blue bubble at 60% opacity. */
     .ps-notes-flag {
       top: 0; right: 0; width: 12px; height: 12px; opacity: 0.6;
       background: no-repeat center / 10px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1 1h8v6H4L2 9V7H1z' fill='%233d8fd1'/%3E%3Cpath d='M2.5 3h5M2.5 5h5' stroke='%23fff' stroke-width='.8'/%3E%3C/svg%3E");
     }
-    .final-grade-info { display: flex; gap: 6px; align-items: baseline; justify-content: center; }
-    .final-grade-info .grade { font-weight: 700; }
-    .legend { margin-top: 12px; }
+    .demo-legend { margin: 10px 0 0; font: 12px/1.4 system-ui, sans-serif; color: #616e7c; }
   </style>
 </head>
-<body class="options-page demo-page">
-  <header class="page-header">
-    <h1>Gradebook Enhancer demo</h1>
-    <p class="subtitle">A sample PowerTeacher Pro scoresheet with made-up students</p>
-  </header>
+<body class="demo-page">
+  <div class="demo-banner">
+    <span><b>Gradebook Enhancer demo</b> · a sample PowerTeacher Pro scoresheet with made-up students, colored with your saved settings (changes show up right away).</span>
+    <span class="demo-actions">
+      <button type="button" id="open-settings" class="primary">Open settings</button>
+      <button type="button" id="enable-all" class="secondary">Turn on all highlight types</button>
+      <span id="demo-status" class="save-status" aria-live="polite"></span>
+    </span>
+  </div>
 
-  <main>
-    <section class="card">
-      <p class="hint">
-        This page runs the same highlighting code that runs on your PowerTeacher Pro scoresheet,
-        using your saved settings. Change something in Settings and this table updates right away.
-        No real student data is used.
-      </p>
-      <p class="hint">
-        Flags, score codes and the final grade column are off by default. Turn them on in Settings,
-        or use the button below to switch on every highlight type at once.
-      </p>
-      <div class="demo-actions">
-        <button type="button" id="open-settings" class="primary">Open settings</button>
-        <button type="button" id="enable-all" class="secondary">Turn on all highlight types</button>
-        <span id="demo-status" class="save-status" aria-live="polite"></span>
+  <div class="ps-page">
+    <h1 class="ps-title" id="ps-title">Scoresheet</h1>
+    <div class="box-round">
+      <div class="summary-row">
+        <span><b>Class Grade:</b> <span id="term-label"></span></span>
+        <span><b>Calculation:</b> Total Points</span>
+        <span class="show-more">Show More</span>
       </div>
-    </section>
-
-    <div class="table-wrap">
-      <table class="scoresheet gridTable" id="scoresheet">
-        <thead><tr id="header-row"><th>Student</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
+      <div class="column-summary-bar">
+        <span><b>Grade Scale Type:</b> (A+ - NP)</span>
+        <span><b>Grade:</b> <span id="class-grade"></span></span>
+      </div>
     </div>
-    <p class="hint legend">Flag tags: L = late, M = missing, I = incomplete, A = absent, E = exempt (full words can be chosen in Settings). Turn off "text tags" in Settings to see PowerTeacher's usual colored squares instead.</p>
-  </main>
+
+    <table class="gridTable scrollable shrink student-name-large display-grade-value" id="scoresheet">
+      <thead id="head"></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="demo-legend">Flag tags: M = missing, I = incomplete, L = late, A = absent, E = exempt. Turn off "text tags" in Settings to see PowerTeacher's usual colored squares.</p>
+  </div>
 
   <script src="settings.js"></script>
   <script src="content.js"></script>

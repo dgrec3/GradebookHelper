@@ -8,13 +8,13 @@ Gradebook Enhancer for PowerTeacher Pro ("the extension") is a Chrome extension 
 The extension does all of its work inside your browser. It does not collect, store, sell or send any student data or personal information anywhere. It has no servers, analytics, ads or trackers.
 
 ## What the extension reads
-- **Scoresheet page content.** On PowerTeacher Pro pages (`https://*.powerschool.com/teachers/*`), the extension reads the scores, flags (such as Late or Missing) and final-grade percentages shown on the page so it can decide which color each cell gets.
+- **Scoresheet page content.** On PowerTeacher Pro pages (`https://*.powerschool.com/teachers/*`), the extension reads the scores and final-grade percentages shown on the page so it can decide which color each cell gets. It also restyles PowerTeacher's own flag and comment icons so they are easier to read.
 - **Points possible.** PowerTeacher does not show each assignment's points possible on the scoresheet. To calculate percentages, the extension reads that number from the data PowerTeacher already loads into the page. Only assignment ID and points-possible pairs are kept; student names, scores and every other field are discarded immediately.
 
 All of this happens in memory, in your browser tab, and is gone when you close or reload the page. None of it is written to storage or sent over the network.
 
 ## What the extension stores
-- **Your highlight settings only**: color bands, thresholds, flag and score-code colors, and on/off switches. They are saved with Chrome's `storage.sync` feature, so if you are signed in to Chrome with sync turned on, Chrome syncs them to your other computers through your Google account. Google's handling of synced data is covered by Google's own privacy policy.
+- **Your highlight settings only**: color bands, thresholds, score-code colors, display options and on/off switches. They are saved with Chrome's `storage.sync` feature, so if you are signed in to Chrome with sync turned on, Chrome syncs them to your other computers through your Google account. Google's handling of synced data is covered by Google's own privacy policy.
 - No student information, grades or page content is ever stored.
 
 ## What the extension sends

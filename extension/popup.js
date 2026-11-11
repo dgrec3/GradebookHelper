@@ -7,11 +7,9 @@
 
   const enabledInput = document.getElementById('enabled');
   const finalInclude = document.getElementById('final-include');
-  const multiEnabled = document.getElementById('multi-enabled');
   const flagTags = document.getElementById('flag-tags');
   const details = document.getElementById('details');
   const bandSummary = document.getElementById('band-summary');
-  const flagsContainer = document.getElementById('flags');
   const scoreCodesContainer = document.getElementById('score-codes');
 
   async function persist() {
@@ -40,7 +38,6 @@
   function render() {
     enabledInput.checked = settings.enabled;
     finalInclude.checked = settings.finalGrade.include;
-    multiEnabled.checked = settings.multiHighlight.enabled;
     flagTags.checked = settings.flagTags;
     details.classList.toggle('muted-section', !settings.enabled);
 
@@ -63,11 +60,6 @@
     }
     settings.scoreCodes.forEach(entry => {
       scoreCodesContainer.append(toggleRow(entry, `${entry.code || '?'}${entry.label ? ` — ${entry.label}` : ''}`));
-    });
-
-    flagsContainer.replaceChildren();
-    PTPSettings.FLAG_DEFINITIONS.forEach(def => {
-      flagsContainer.append(toggleRow(settings.flags[def.key], def.label));
     });
   }
 
@@ -102,11 +94,6 @@
 
   flagTags.addEventListener('change', () => {
     settings.flagTags = flagTags.checked;
-    persist();
-  });
-
-  multiEnabled.addEventListener('change', () => {
-    settings.multiHighlight.enabled = multiEnabled.checked;
     persist();
   });
 

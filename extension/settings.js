@@ -11,8 +11,8 @@
   const STORAGE_KEY = 'settings';
   const SCHEMA_VERSION = 1;
 
-  // Flag order doubles as precedence: when a cell has several visible flags,
-  // the first enabled one in this list decides the color.
+  // PowerTeacher's flags. They have no colors of their own (an earlier build
+  // colored and split cells by flag); the text tags show them more clearly.
   // `tag` / `letter` replace PowerTeacher's icon when text tags are on; the
   // single letter (default) leaves room in narrow cells for the comment icon.
   const FLAG_DEFINITIONS = [
@@ -29,14 +29,6 @@
     { enabled: true, min: 70, max: 80, color: '#ffeb3b' }
   ];
 
-  const DEFAULT_FLAG_COLORS = {
-    exempt: '#c5b3e6',
-    missing: '#ff9800',
-    incomplete: '#90caf9',
-    absent: '#a5d6a7',
-    late: '#ffcc80'
-  };
-
   // Special grade-scale codes are defined per district (HCST: X, M, I, WP, WF),
   // so they're an editable list rather than fixed. M = Medical is pre-filled.
   const DEFAULT_SCORE_CODES = [
@@ -47,7 +39,6 @@
   const MAX_SCORE_CODES = 20;
   const MAX_CODE_LENGTH = 6;
   const MAX_LABEL_LENGTH = 40;
-  const MIN_SPLIT_SEGMENTS = 2;
   // Highlight colors are drawn semi-transparent so PowerTeacher's alternating
   // row shading shows through colored cells (keeps rows easy to follow).
   const MIN_COLOR_STRENGTH = 30;
@@ -56,14 +47,8 @@
   const ROW_DIVIDER_MODES = ['off', 'every', 'five', 'both'];
   const FLAG_TAG_STYLES = ['filled', 'outlined'];
   const FLAG_TAG_LENGTHS = ['letter', 'word'];
-  const MAX_SPLIT_SEGMENTS = 3;
 
   function getDefaults() {
-    const flags = {};
-    FLAG_DEFINITIONS.forEach(def => {
-      flags[def.key] = { enabled: false, color: DEFAULT_FLAG_COLORS[def.key] };
-    });
-
     return {
       schemaVersion: SCHEMA_VERSION,
       enabled: true,
@@ -74,11 +59,8 @@
         bands: cloneBands(DEFAULT_BANDS)
       },
       scoreCodes: cloneBands(DEFAULT_SCORE_CODES),
-      // When a cell meets several conditions (e.g. 65% and Late), split it into
-      // left-to-right stripes, one per condition, up to `max`.
-      multiHighlight: { enabled: true, max: MAX_SPLIT_SEGMENTS },
       // Replace PowerTeacher's small flag icons with readable text tags
-      // (LATE, MISS…). Independent of flag colors and split highlighting.
+      // (M, L, I, A, E or MISS, LATE…). Independent of the cell color.
       flagTags: true,
       // 'filled' = white text on a dark pill (readable on any color);
       // 'outlined' = text and border in the cell's own text color.
@@ -91,8 +73,7 @@
       rowHover: true,
       rowDividers: 'both',
       // Put PowerTeacher's comment bubble on a white badge so it shows on colors.
-      commentBadge: true,
-      flags
+      commentBadge: true
     };
   }
 
@@ -151,15 +132,6 @@
     const assignmentBands = normalizeBands(migrated.assignmentBands, defaults.assignmentBands);
     const rawFinal = migrated.finalGrade || {};
 
-    const flags = {};
-    FLAG_DEFINITIONS.forEach(def => {
-      const rawFlag = migrated.flags?.[def.key] || {};
-      flags[def.key] = {
-        enabled: rawFlag.enabled === true,
-        color: isHexColor(rawFlag.color) ? rawFlag.color.toLowerCase() : DEFAULT_FLAG_COLORS[def.key]
-      };
-    });
-
     return {
       schemaVersion: SCHEMA_VERSION,
       enabled: migrated.enabled !== false,
@@ -170,11 +142,10 @@
         // Separate final-grade bands start as a copy of the assignment bands.
         bands: normalizeBands(rawFinal.bands, assignmentBands)
       },
+      // Settings saved by earlier builds may still hold `flags` (flag colors)
+      // and `multiHighlight` (split cells); those features were removed, so
+      // the keys are simply not carried over.
       scoreCodes: normalizeScoreCodes(migrated.scoreCodes),
-      multiHighlight: {
-        enabled: migrated.multiHighlight?.enabled !== false,
-        max: clampInteger(migrated.multiHighlight?.max, MIN_SPLIT_SEGMENTS, MAX_SPLIT_SEGMENTS, MAX_SPLIT_SEGMENTS)
-      },
       // Missing in settings saved before tags existed → on, matching the default.
       flagTags: migrated.flagTags !== false,
       flagTagStyle: FLAG_TAG_STYLES.includes(migrated.flagTagStyle) ? migrated.flagTagStyle : 'filled',
@@ -182,8 +153,7 @@
       colorStrength: clampInteger(migrated.colorStrength, MIN_COLOR_STRENGTH, MAX_COLOR_STRENGTH, DEFAULT_COLOR_STRENGTH),
       rowHover: migrated.rowHover !== false,
       rowDividers: ROW_DIVIDER_MODES.includes(migrated.rowDividers) ? migrated.rowDividers : 'both',
-      commentBadge: migrated.commentBadge !== false,
-      flags
+      commentBadge: migrated.commentBadge !== false
     };
   }
 
@@ -263,8 +233,6 @@
 
   // ── Readability ─────────────────────────────────────────────────────────────
 
-  // WCAG relative luminance; 0.179 is the point where black and white text
-  // have equal contrast against the background.
   // "#rrggbb" + percent → "rgba(r, g, b, a)" for semi-transparent highlights.
   function withStrength(hexColor, strength) {
     const [r, g, b] = [1, 3, 5].map(offset => parseInt(hexColor.slice(offset, offset + 2), 16));
@@ -289,6 +257,8 @@
     element.style.color = contrastTextColor(shown);
   }
 
+  // WCAG relative luminance; 0.179 is the point where black and white text
+  // have equal contrast against the background.
   function contrastTextColor(hexColor) {
     const channels = [1, 3, 5].map(offset => {
       const value = parseInt(hexColor.slice(offset, offset + 2), 16) / 255;
@@ -333,11 +303,9 @@
     MAX_SCORE_CODES,
     MAX_CODE_LENGTH,
     MAX_LABEL_LENGTH,
-    MIN_SPLIT_SEGMENTS,
     MIN_COLOR_STRENGTH,
     MAX_COLOR_STRENGTH,
     ROW_DIVIDER_MODES,
-    MAX_SPLIT_SEGMENTS,
     getDefaults,
     normalize,
     cloneBands,

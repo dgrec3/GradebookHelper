@@ -122,19 +122,16 @@ input[type="color"] {
 }
 
 .band-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-.band-row, .flag-row {
+.band-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
 }
-.flag-row .switch-row { min-width: 130px; }
 .range { display: inline-flex; align-items: center; gap: 4px; }
 
 #final-options { margin-left: 26px; }
 
-.multi-options { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px 26px; }
-.multi-options select,
 .strength-row select {
   font: inherit;
   padding: 4px 6px;
@@ -142,11 +139,6 @@ input[type="color"] {
   border-radius: 4px;
   background: var(--card);
   color: var(--text);
-}
-.swatch.split {
-  min-width: 72px;
-  color: #000;
-  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
 }
 #final-bands { margin-top: 8px; }
 
