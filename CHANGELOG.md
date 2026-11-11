@@ -4,6 +4,7 @@
 First public release (manifest version `1.0`). It includes all the work below, which was built as pre-release 2.0.0 and 2.1.0. Those numbers were never published.
 
 ### Chrome Web Store prep (branch v1.03)
+- **New icon:** a gradebook page (blue header, name lines, red/yellow/green score grid) on a navy tile, with "DG" in the bottom-right on the 48/128 px and store icons. The 16/32 px icons leave the letters out, since they'd be unreadable. The promo tile uses the new icon.
 - **Store screenshots redone (5):** each shows the sample scoresheet under a settings preset, with the matching settings card or popup floating on top and a caption bar. `tools/make_screenshots.py` now has presets (default, bands, rows, codes), `only=` to show single settings cards (auto-trimmed, no hand-tuned crops), and `hover=` to draw the row outline headlessly.
 - **Demo page is now hidden:** it still ships (so Chrome Web Store reviewers can test without a PowerTeacher login), but the popup button and the settings-page link are gone. The reviewer test instructions give its chrome-extension:// address.
 - Settings: "Outline the row under the mouse" → "Outline the row when you hover over it".

@@ -18,7 +18,7 @@ All extension code lives in `extension/`, which is the folder to load in Chrome.
 | `options.html/js`, `band-editor.js`, `color-picker.js` | Full editor; band ladder; 16-color palette picker with "More colors…" |
 | `ui.css` | Shared popup/options styles (light + dark) |
 | `demo.html/js`, `demo-data.json` | PowerTeacher look-alike scoresheet (made-up class of 19) that runs the real highlighting. Ships **unlinked**: for reviewers (address in the test instructions), our testing and store screenshots |
-| `icons/` | 16/32/48/128 icons drawn by `tools/make_icons.py` |
+| `icons/` | 16/32/48/128 icons drawn by `tools/make_icons.py` (gradebook page; "DG" on 48/128 only) |
 
 Root (not packaged): `FEATURES.md`, `CHANGELOG.md`, `STRATEGIES_THAT_WONT_WORK.md`, `PRIVACY.md`, `STORE_REVIEW.md`, `store/` (listing, screenshots, promo tile), `tools/` (`make_icons.py`, `make_screenshots.py`, `package.py` → `dist/`, which is gitignored).
 
