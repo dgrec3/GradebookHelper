@@ -20,20 +20,23 @@ Color-code PowerTeacher Pro scoresheet grades with your own thresholds, plus cle
 
 **Description:**
 ```
-See at a glance which students need attention. Gradebook Enhancer colors the cells of your PowerTeacher Pro scoresheet based on rules you choose.
+See at a glance which students need attention. Gradebook Enhancer colors the cells of your PowerTeacher Pro scoresheet based on rules you choose, and makes the whole grid easier to read.
+
+Made by a teacher with 25 years in the classroom, for fellow educators, and free.
 
 WHAT IT DOES
-• Score bands: color any score below, between or above the percentages you pick. Add as many bands as you like (out of the box: red below 70%, yellow 70% to 80%, green 80% and up).
-• Final grade column: highlight course grades too, using the same bands or a separate set.
-• Flag tags: PowerTeacher's tiny colored flag squares become clear letters, always in the same spot: M (missing), I (incomplete), L (late), A (absent) and E (exempt). Full words are an option.
+• Grade bands: color scores by percentage, lowest to highest. Out of the box: red below 70%, yellow 70% to 80%, green 80% and up. Add, remove or recolor bands; each band starts where the one before it ends, so there are no gaps or overlaps to worry about. Uncheck a band to leave that range uncolored.
+• Course grade column: highlight course grades too, using the same bands or a separate set.
+• Flag letters: PowerTeacher's tiny colored flag squares become clear letters, always in the same spot: M (missing), I (incomplete), L (late), A (absent) and E (exempt). Prefer words? Switch to LATE, MISS, INC, ABS and EXC.
+• Comment badges: cells with comments get a clear badge, so notes don't get lost on colored cells.
 • Score codes: color your district's special codes, like M for Medical.
-• Row guides: soft, see-through colors keep PowerTeacher's row stripes visible, with optional lines under each row (heavier every 5) and an outline on the row under your mouse.
-• Comment badges: cells with comments get a clear badge, so notes don't disappear on colored cells.
+• Easy-to-follow rows: soft, see-through colors keep PowerTeacher's row stripes visible. Add lines under each row (with a heavier line every 5 rows), adjust how dark they are, and outline the row you hover over.
+• Simple color choices: pick from 16 ready-made colors, or any color you like.
 • Readable text: text automatically switches between black and white to stay readable on any color.
-• Live updates: changes in settings show up on your open scoresheet right away. No reload needed.
+• Live updates: changes show up on your open scoresheet right away. No reload needed.
 
 PRIVACY
-Everything runs inside your browser. The extension does not collect, store or send any student data, and it has no analytics, ads or trackers. Only your color settings are saved, using Chrome's built-in settings sync.
+Everything runs inside your browser. The extension does not collect, store or send any student data, and it has no analytics, ads or trackers. Only your settings are saved, using Chrome's built-in settings sync.
 
 WORKS WITH
 PowerTeacher Pro scoresheets on powerschool.com addresses (https://yourdistrict.powerschool.com/teachers/...). Districts that use a custom web address are not supported yet.
@@ -61,17 +64,17 @@ Gradebook Enhancer is an independent tool for teachers. It is not affiliated wit
 
 **Single purpose description:**
 ```
-Highlights cells in the PowerTeacher Pro gradebook scoresheet with teacher-chosen colors based on score thresholds and special score codes, and makes the scoresheet easier to read (clear flag tags, comment badges, row guides), so teachers can spot grades that need attention.
+Makes the PowerTeacher Pro gradebook scoresheet easier to read: it colors grade cells using the teacher's own percentage bands and score codes, and shows the scoresheet's existing flags and comments more clearly (letter tags, comment badges, row lines), so teachers can quickly spot students who need attention. It runs only on PowerTeacher Pro teacher pages and does nothing else.
 ```
 
 **Permission justification — storage:**
 ```
-Saves the teacher's highlight settings (color bands, thresholds, score-code colors, display options and on/off switches) with chrome.storage.sync. No student data or page content is stored.
+The storage permission saves the teacher's display settings with chrome.storage.sync: the grade bands (percent ranges and colors), score-code colors, course-grade options, color strength, row line and flag tag options, and on/off switches. These settings are read back each time the scoresheet loads, and sync lets them follow the teacher to their other computers. No student data, grades or page content is ever stored.
 ```
 
 **Permission justification — host permission** (content script on `https://*.powerschool.com/teachers/*`):
 ```
-The extension's only job is to color cells on the PowerTeacher Pro scoresheet, which each school district hosts on its own powerschool.com subdomain (for example https://district.powerschool.com/teachers/). The wildcard subdomain is needed because the district name varies. The script is limited to the /teachers/ path and does nothing on other pages.
+The content script runs only on https://*.powerschool.com/teachers/*, the PowerTeacher Pro teacher pages. Each school district's PowerTeacher Pro is hosted on its own powerschool.com subdomain (for example https://yourdistrict.powerschool.com/teachers/), so a wildcard subdomain is required to work for any district. Access is limited to the /teachers/ path; the extension does not run on any other site or page. On these pages it reads the scores, percentages and flags already shown on the scoresheet, plus each assignment's points possible from data the page has already loaded, in order to color the cells. Nothing is stored or sent anywhere.
 ```
 
 **Are you using remote code?** No, I am not using remote code.
