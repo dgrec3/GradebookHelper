@@ -45,7 +45,7 @@ Gradebook Enhancer is an independent tool for teachers. It is not affiliated wit
 | Field | File |
 |---|---|
 | Store icon (128×128) | `store-icon-128.png` |
-| Screenshots (1280×800, in this order) | `screenshot-1-in-action.png` (default settings), `screenshot-2-bands.png` (custom bands + final grade), `screenshot-3-flags.png` (flag letters, comment badges, Medical code, final grade), `screenshot-4-settings.png` (settings page beside the scoresheet) |
+| Screenshots (1280×800, in this order) | `screenshot-1-in-action.png` (defaults + toolbar popup), `screenshot-2-bands.png` (5-band scheme + band editor), `screenshot-3-flags.png` (flag letters, comment badges + Flags card), `screenshot-4-rows.png` (softer colors, heavier lines, outlined row + Rows & colors card), `screenshot-5-final-codes.png` (Medical code in the course grade + Final grade and Score codes cards) |
 | Small promo tile (440×280) | `promo-small-440x280.png` |
 | Marquee promo tile | optional, skip |
 

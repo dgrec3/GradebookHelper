@@ -4,6 +4,7 @@
 First public release (manifest version `1.0`). It includes all the work below, which was built as pre-release 2.0.0 and 2.1.0. Those numbers were never published.
 
 ### Chrome Web Store prep (branch v1.03)
+- **Store screenshots redone (5):** each shows the sample scoresheet under a settings preset, with the matching settings card or popup floating on top and a caption bar. `tools/make_screenshots.py` now has presets (default, bands, rows, codes), `only=` to show single settings cards (auto-trimmed, no hand-tuned crops), and `hover=` to draw the row outline headlessly.
 - **Demo page is now hidden:** it still ships (so Chrome Web Store reviewers can test without a PowerTeacher login), but the popup button and the settings-page link are gone. The reviewer test instructions give its chrome-extension:// address.
 - Settings: "Outline the row under the mouse" → "Outline the row when you hover over it".
 - **Line darkness slider** under "Row lines" (Lighter ↔ Darker, 10–40% black, default 18 = the old look). It drives a `--ptp-line` CSS variable; the every-5 line is 2.5× as dark, capped at 85%. It's grayed out when row lines are off.
