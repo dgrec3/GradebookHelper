@@ -1,5 +1,5 @@
 /**
- * Shared settings model for PowerSchool Enhancer.
+ * Shared settings model for Gradebook Enhancer for PowerTeacher Pro.
  *
  * Loaded by the content script, the toolbar popup and the options page so all
  * three agree on defaults, validation and band matching.
@@ -13,12 +13,14 @@
 
   // Flag order doubles as precedence: when a cell has several visible flags,
   // the first enabled one in this list decides the color.
+  // `tag` / `letter` replace PowerTeacher's icon when text tags are on; the
+  // single letter (default) leaves room in narrow cells for the comment icon.
   const FLAG_DEFINITIONS = [
-    { key: 'exempt',     label: 'Exempt',     iconClass: 'ps-exempt-flag-purple' },
-    { key: 'missing',    label: 'Missing',    iconClass: 'ps-missing-flag' },
-    { key: 'incomplete', label: 'Incomplete', iconClass: 'ps-incomplete-flag' },
-    { key: 'absent',     label: 'Absent',     iconClass: 'ps-absent-flag' },
-    { key: 'late',       label: 'Late',       iconClass: 'ps-late-flag' }
+    { key: 'exempt',     label: 'Exempt',     iconClass: 'ps-exempt-flag-purple', tag: 'Exc',  letter: 'E' },
+    { key: 'missing',    label: 'Missing',    iconClass: 'ps-missing-flag',       tag: 'Miss', letter: 'M' },
+    { key: 'incomplete', label: 'Incomplete', iconClass: 'ps-incomplete-flag',    tag: 'Inc',  letter: 'I' },
+    { key: 'absent',     label: 'Absent',     iconClass: 'ps-absent-flag',        tag: 'Abs',  letter: 'A' },
+    { key: 'late',       label: 'Late',       iconClass: 'ps-late-flag',          tag: 'Late', letter: 'L' }
   ];
 
   // Defaults reproduce v1.2.1 exactly: red below 70%, yellow 70% up to 80%.
@@ -46,6 +48,14 @@
   const MAX_CODE_LENGTH = 6;
   const MAX_LABEL_LENGTH = 40;
   const MIN_SPLIT_SEGMENTS = 2;
+  // Highlight colors are drawn semi-transparent so PowerTeacher's alternating
+  // row shading shows through colored cells (keeps rows easy to follow).
+  const MIN_COLOR_STRENGTH = 30;
+  const MAX_COLOR_STRENGTH = 100;
+  const DEFAULT_COLOR_STRENGTH = 70;
+  const ROW_DIVIDER_MODES = ['off', 'every', 'five', 'both'];
+  const FLAG_TAG_STYLES = ['filled', 'outlined'];
+  const FLAG_TAG_LENGTHS = ['letter', 'word'];
   const MAX_SPLIT_SEGMENTS = 3;
 
   function getDefaults() {
@@ -67,6 +77,21 @@
       // When a cell meets several conditions (e.g. 65% and Late), split it into
       // left-to-right stripes, one per condition, up to `max`.
       multiHighlight: { enabled: true, max: MAX_SPLIT_SEGMENTS },
+      // Replace PowerTeacher's small flag icons with readable text tags
+      // (LATE, MISS…). Independent of flag colors and split highlighting.
+      flagTags: true,
+      // 'filled' = white text on a dark pill (readable on any color);
+      // 'outlined' = text and border in the cell's own text color.
+      flagTagStyle: 'filled',
+      // 'letter' = L/M/I/A/E (compact), 'word' = LATE/MISS/INC/ABS/EXC.
+      flagTagLength: 'letter',
+      // Percent opacity of highlight colors (100 = solid, as before 1.0).
+      colorStrength: DEFAULT_COLOR_STRENGTH,
+      // Row tracking aids on the scoresheet.
+      rowHover: true,
+      rowDividers: 'both',
+      // Put PowerTeacher's comment bubble on a white badge so it shows on colors.
+      commentBadge: true,
       flags
     };
   }
@@ -150,6 +175,14 @@
         enabled: migrated.multiHighlight?.enabled !== false,
         max: clampInteger(migrated.multiHighlight?.max, MIN_SPLIT_SEGMENTS, MAX_SPLIT_SEGMENTS, MAX_SPLIT_SEGMENTS)
       },
+      // Missing in settings saved before tags existed → on, matching the default.
+      flagTags: migrated.flagTags !== false,
+      flagTagStyle: FLAG_TAG_STYLES.includes(migrated.flagTagStyle) ? migrated.flagTagStyle : 'filled',
+      flagTagLength: FLAG_TAG_LENGTHS.includes(migrated.flagTagLength) ? migrated.flagTagLength : 'letter',
+      colorStrength: clampInteger(migrated.colorStrength, MIN_COLOR_STRENGTH, MAX_COLOR_STRENGTH, DEFAULT_COLOR_STRENGTH),
+      rowHover: migrated.rowHover !== false,
+      rowDividers: ROW_DIVIDER_MODES.includes(migrated.rowDividers) ? migrated.rowDividers : 'both',
+      commentBadge: migrated.commentBadge !== false,
       flags
     };
   }
@@ -232,6 +265,30 @@
 
   // WCAG relative luminance; 0.179 is the point where black and white text
   // have equal contrast against the background.
+  // "#rrggbb" + percent → "rgba(r, g, b, a)" for semi-transparent highlights.
+  function withStrength(hexColor, strength) {
+    const [r, g, b] = [1, 3, 5].map(offset => parseInt(hexColor.slice(offset, offset + 2), 16));
+    return `rgba(${r}, ${g}, ${b}, ${(strength / 100).toFixed(2)})`;
+  }
+
+  // The color a semi-transparent highlight actually shows over a white cell,
+  // as "#rrggbb". Used to pick black/white text and for preview swatches.
+  function blendOverWhite(hexColor, strength) {
+    const alpha = strength / 100;
+    return '#' + [1, 3, 5].map(offset => {
+      const value = parseInt(hexColor.slice(offset, offset + 2), 16);
+      return Math.round(value * alpha + 255 * (1 - alpha)).toString(16).padStart(2, '0');
+    }).join('');
+  }
+
+  // Paints a preview swatch the way the gradebook will show the color: the
+  // translucent highlight over a white cell, with matching black/white text.
+  function paintSwatch(element, hexColor, strength) {
+    const shown = blendOverWhite(hexColor, strength);
+    element.style.backgroundColor = shown;
+    element.style.color = contrastTextColor(shown);
+  }
+
   function contrastTextColor(hexColor) {
     const channels = [1, 3, 5].map(offset => {
       const value = parseInt(hexColor.slice(offset, offset + 2), 16) / 255;
@@ -249,7 +306,7 @@
       return normalize(stored[STORAGE_KEY]);
     } catch (error) {
       // Extension context can be invalidated after an update; fall back safely.
-      console.debug('[PowerSchool Enhancer] Could not load settings; using defaults.', error);
+      console.debug('[Gradebook Enhancer] Could not load settings; using defaults.', error);
       return getDefaults();
     }
   }
@@ -266,7 +323,7 @@
         }
       });
     } catch (error) {
-      console.debug('[PowerSchool Enhancer] Could not watch settings.', error);
+      console.debug('[Gradebook Enhancer] Could not watch settings.', error);
     }
   }
 
@@ -277,6 +334,9 @@
     MAX_CODE_LENGTH,
     MAX_LABEL_LENGTH,
     MIN_SPLIT_SEGMENTS,
+    MIN_COLOR_STRENGTH,
+    MAX_COLOR_STRENGTH,
+    ROW_DIVIDER_MODES,
     MAX_SPLIT_SEGMENTS,
     getDefaults,
     normalize,
@@ -286,6 +346,9 @@
     matchScoreCode,
     describeBandIssues,
     contrastTextColor,
+    withStrength,
+    blendOverWhite,
+    paintSwatch,
     load,
     save,
     onChange

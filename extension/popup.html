@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>PowerSchool Enhancer</title>
+  <title>Gradebook Enhancer</title>
   <link rel="stylesheet" href="ui.css">
 </head>
 <body class="popup-page">
-  <h1>PowerSchool Enhancer</h1>
+  <h1>Gradebook Enhancer</h1>
 
   <label class="switch-row">
     <input type="checkbox" id="enabled">
@@ -31,10 +31,15 @@
     <div id="score-codes"></div>
 
     <h2>Flags</h2>
+    <label class="switch-row">
+      <input type="checkbox" id="flag-tags">
+      <span>Text tags instead of icons</span>
+    </label>
     <div id="flags"></div>
   </div>
 
   <button type="button" id="open-options" class="primary">Edit colors &amp; thresholds…</button>
+  <button type="button" id="open-demo" class="secondary demo-button">See it on a sample gradebook</button>
 
   <script src="settings.js"></script>
   <script src="popup.js"></script>

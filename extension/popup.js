@@ -8,6 +8,7 @@
   const enabledInput = document.getElementById('enabled');
   const finalInclude = document.getElementById('final-include');
   const multiEnabled = document.getElementById('multi-enabled');
+  const flagTags = document.getElementById('flag-tags');
   const details = document.getElementById('details');
   const bandSummary = document.getElementById('band-summary');
   const flagsContainer = document.getElementById('flags');
@@ -17,7 +18,7 @@
     try {
       await PTPSettings.save(settings);
     } catch (error) {
-      console.error('[PowerSchool Enhancer] Save failed.', error);
+      console.error('[Gradebook Enhancer] Save failed.', error);
     }
   }
 
@@ -31,7 +32,7 @@
   function swatch(color, enabled) {
     const element = document.createElement('span');
     element.className = 'swatch small';
-    element.style.backgroundColor = color;
+    PTPSettings.paintSwatch(element, color, settings.colorStrength);
     element.classList.toggle('muted', !enabled);
     return element;
   }
@@ -40,6 +41,7 @@
     enabledInput.checked = settings.enabled;
     finalInclude.checked = settings.finalGrade.include;
     multiEnabled.checked = settings.multiHighlight.enabled;
+    flagTags.checked = settings.flagTags;
     details.classList.toggle('muted-section', !settings.enabled);
 
     bandSummary.replaceChildren();
@@ -98,9 +100,20 @@
     persist();
   });
 
+  flagTags.addEventListener('change', () => {
+    settings.flagTags = flagTags.checked;
+    persist();
+  });
+
   multiEnabled.addEventListener('change', () => {
     settings.multiHighlight.enabled = multiEnabled.checked;
     persist();
+  });
+
+  // The demo is an extension page, so it opens in a normal tab.
+  document.getElementById('open-demo').addEventListener('click', () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('demo.html') });
+    window.close();
   });
 
   document.getElementById('open-options').addEventListener('click', () => {

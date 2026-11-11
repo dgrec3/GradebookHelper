@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>PowerSchool Enhancer Settings</title>
+  <title>Gradebook Enhancer Settings</title>
   <link rel="stylesheet" href="ui.css">
 </head>
 <body class="options-page">
   <header class="page-header">
-    <h1>PowerSchool Enhancer</h1>
-    <p class="subtitle">Grade highlighting for PowerTeacher Pro scoresheets</p>
+    <h1>Gradebook Enhancer</h1>
+    <p class="subtitle">Grade highlighting for PowerTeacher Pro scoresheets · Not affiliated with PowerSchool</p>
     <span id="save-status" class="save-status" aria-live="polite"></span>
+    <p class="hint"><a href="demo.html" target="_blank">Try your settings on a sample gradebook</a></p>
   </header>
 
   <main>
@@ -18,6 +19,32 @@
         <input type="checkbox" id="enabled">
         <span>Highlighting on</span>
       </label>
+    </section>
+
+    <section class="card">
+      <h2>Rows &amp; colors</h2>
+      <div class="strength-row">
+        <label for="color-strength">Color strength</label>
+        <input type="range" id="color-strength" min="30" max="100" step="5">
+        <span id="color-strength-value" class="strength-value"></span>
+      </div>
+      <p class="hint">
+        Lower strength gives softer colors and lets PowerTeacher's gray row stripes show
+        through colored cells, so each student's row stays easy to follow.
+      </p>
+      <label class="switch-row">
+        <input type="checkbox" id="row-hover">
+        <span>Outline the row under the mouse</span>
+      </label>
+      <div class="strength-row">
+        <label for="row-dividers">Row lines</label>
+        <select id="row-dividers">
+          <option value="off">None</option>
+          <option value="every">Line under every row</option>
+          <option value="five">Heavy line every 5 rows</option>
+          <option value="both">Both</option>
+        </select>
+      </div>
     </section>
 
     <section class="card">
@@ -71,16 +98,44 @@
       <h2>Score codes</h2>
       <p class="hint">
         Color cells whose score or final grade is a special code from your district's
-        grade scale (for example <b>M</b> for Medical). Codes override flags and score bands.
+        grade scale (for example <b>M</b> for Medical). With splitting off, a code wins over flags and score bands.
       </p>
       <div id="score-codes"></div>
     </section>
 
     <section class="card">
       <h2>Flags</h2>
+      <label class="switch-row">
+        <input type="checkbox" id="flag-tags">
+        <span>Replace PowerTeacher's flag icons with text tags</span>
+      </label>
+      <div class="strength-row">
+        <label for="flag-tag-style">Tag style</label>
+        <select id="flag-tag-style">
+          <option value="filled">Filled (white on dark)</option>
+          <option value="outlined">Outlined (matches cell text)</option>
+        </select>
+        <span class="flag-tag-sample filled" aria-hidden="true">L</span>
+        <span class="flag-tag-sample" aria-hidden="true">M</span>
+      </div>
+      <div class="strength-row">
+        <label for="flag-tag-length">Tag text</label>
+        <select id="flag-tag-length">
+          <option value="letter">One letter (L, M, I, A, E)</option>
+          <option value="word">Short word (LATE, MISS, INC, ABS, EXC)</option>
+        </select>
+      </div>
+      <label class="switch-row">
+        <input type="checkbox" id="comment-badge">
+        <span>Make comment icons stand out (white badge)</span>
+      </label>
       <p class="hint">
-        Color cells that PowerTeacher has flagged. A flag color overrides the score band.
-        If a cell has several flags, the highest one in this list wins.
+        Tags appear for every flag that's set, whether or not its color is on below,
+        and work with or without split highlighting.
+      </p>
+      <p class="hint">
+        Color cells that PowerTeacher has flagged. With splitting off, a flag wins over the
+        score band, and if a cell has several flags the highest one in this list wins.
       </p>
       <div id="flags"></div>
     </section>

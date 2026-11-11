@@ -134,7 +134,8 @@ input[type="color"] {
 #final-options { margin-left: 26px; }
 
 .multi-options { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px 26px; }
-.multi-options select {
+.multi-options select,
+.strength-row select {
   font: inherit;
   padding: 4px 6px;
   border: 1px solid var(--border);
@@ -163,3 +164,16 @@ input[type="color"] {
 .band-summary { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
 .summary-row { display: flex; align-items: center; gap: 8px; }
 .muted-section { opacity: 0.45; pointer-events: none; }
+
+.popup-page .demo-button { width: 100%; margin-top: 6px; }
+.page-header a { color: var(--accent); }
+
+/* Preview of the in-gradebook text tag (same look content.js applies). */
+.flag-tag-sample {
+  font-size: 9px; font-weight: 700; line-height: 1; padding: 2px 3px;
+  border: 1px solid currentColor; border-radius: 3px; text-transform: uppercase;
+}
+.flag-tag-sample.filled { background: #2f3b48; border-color: #2f3b48; color: #fff; }
+.strength-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; flex-wrap: wrap; }
+.strength-row input[type=range] { flex: 1; min-width: 140px; max-width: 280px; }
+.strength-value { min-width: 3em; font-variant-numeric: tabular-nums; }

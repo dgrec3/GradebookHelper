@@ -59,9 +59,32 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 - ☑ Keep the duplicate-load guard, CSS classes (not inline styles), debounced rescans, and relevance-filtered MutationObserver.
 - ☑ One static `<style>` tag; each highlighted cell gets class `ptp-hl` plus `--ptp-bg/--ptp-fg/--ptp-shadow` variables (since 1.0).
 
-## 8. Chrome Web Store readiness (later phase)
+## 8. Chrome Web Store readiness
 - ☑ Narrow host permissions to the gradebook pages only. Permissions: `storage` only.
-- ☐ Icons (16/32/48/128), store screenshots, description.
-- ☐ Privacy policy: no data leaves the browser; grades are read locally only.
-- ☐ Review for single-purpose policy and remote-code rules (none used).
+- ☑ Icons (16/32/48/128), store screenshots, description (`store/`, drawn by `tools/make_icons.py` and `tools/make_store_images.py`).
+- ☑ Privacy policy (`PRIVACY.md`): no data leaves the browser; grades are read locally only.
+- ☑ Review for single-purpose policy and remote-code rules (none used); see `STORE_REVIEW.md`.
+- ☑ Store-safe name "Gradebook Enhancer for PowerTeacher Pro" plus non-affiliation lines.
+- ☑ Minimal data relay: injected.js passes only assignment ID → points.
+- ☑ Upload zip built by `tools/package.py` (forward-slash paths; refuses `_`/`.` files).
+
+## 8b. Text flag tags
+- ☑ Setting `flagTags` (default on; missing in old settings → on). Toggles in options (Flags card) and popup.
+- ☑ CSS only, via class `ptp-flag-tags` on `<html>`: each visible flag span loses its square and shows its `tag` text (from `FLAG_DEFINITIONS`) through `::before`.
+- ☑ `span.flag-container` becomes a fixed 2×2 grid of 8px slots on the left edge (`FLAG_SLOTS`): Missing top-left, Incomplete top-right, Late bottom-left, Absent bottom-right. Columns are a fixed 8px so empty slots stay open (word mode uses max-content columns). Exempt (outside the container) is centered on the left edge.
+- ☑ Independent of flag colors and split highlighting; off when highlighting is off.
+- Known limit: Exempt together with other flags can overlap the grid (rare: Exempt usually has a blank score).
+
+## 8c. Row tracking & color strength
+- ☑ `colorStrength` (30–100, default 70): `--ptp-bg` uses `rgba()` via `PTPSettings.withStrength`; text contrast via `blendOverWhite` + `contrastTextColor`; swatches via `paintSwatch`.
+- ☑ `rowHover` (default on): `html.ptp-row-hover table.gridTable tr[id^="std"]:hover` cells get inset top/bottom box-shadows; the name cell gets a light blue tint.
+- ☑ `rowDividers`: off / every / five / both (default both). Uses classes `ptp-row-lines` and `ptp-row-fives` (`:nth-child(5n)`).
+- ☑ `flagTagStyle`: filled (default) / outlined.
+- ☑ `flagTagLength`: letter (default; `FLAG_DEFINITIONS[].letter`, 9px, one row) / word (`.tag`, 7px, two per column) via class `ptp-flag-tags-word`.
+- ☑ `commentBadge` (default on): class `ptp-comment-badge` on `<html>`. `span.ps-notes-flag:not(.ng-hide)` gets a white background, `opacity: 1`, and a white-then-navy ring shadow.
+
+## 9. Demo page
+- ☑ `demo.html` + `demo.js` + `demo-data.json`: ten made-up students and six assignments in PowerTeacher Pro markup (same td classes, `var` scores, flag icons with `ng-hide`, final-grade `.grade`/`.percent`).
+- ☑ Loads its data with a real XHR, so it goes through injected.js → points relay → content.js exactly like PowerTeacher.
+- ☑ Uses the teacher's saved settings and updates live; a "Turn on all highlight types" button enables final grade, every flag and every score code.
 - ☑ `CHANGELOG.md`, `_handoff.md`, `STRATEGIES_THAT_WONT_WORK.md`.

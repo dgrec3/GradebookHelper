@@ -1,7 +1,12 @@
 /**
  * Runs in the PAGE context (not content script context).
- * Wraps XMLHttpRequest to intercept API responses and relay
- * assignment pointspossible data back to the content script.
+ * Wraps XMLHttpRequest so the content script can learn each assignment's
+ * points possible, which the scoresheet DOM doesn't show.
+ *
+ * Privacy: responses are parsed here, in the page, and only
+ * { assignmentId: pointsPossible } pairs are passed on. Student names,
+ * scores and every other field never leave this function. That keeps the
+ * extension's data footprint minimal and easy to explain to store reviewers.
  */
 (function () {
   if (window.__ptpGradeHighlighterXhrWrapped) {
@@ -9,17 +14,31 @@
   }
   window.__ptpGradeHighlighterXhrWrapped = true;
 
-  const origOpen = XMLHttpRequest.prototype.open;
   const origSend = XMLHttpRequest.prototype.send;
 
-  XMLHttpRequest.prototype.open = function (method, url) {
-    this._ptpUrl = url;
-    return origOpen.apply(this, arguments);
-  };
+  // Recursively walk any JSON value looking for assignment records.
+  // Points live in _assignmentsections[0].scoreentrypoints.
+  function collectPoints(value, points) {
+    if (!value || typeof value !== 'object') return;
+
+    if (value.assignmentid != null &&
+        Array.isArray(value._assignmentsections) &&
+        value._assignmentsections.length > 0) {
+      const pts = parseFloat(value._assignmentsections[0].scoreentrypoints);
+      if (!Number.isNaN(pts)) {
+        points[String(value.assignmentid)] = pts;
+      }
+    }
+
+    for (const child of Object.values(value)) {
+      if (child && typeof child === 'object') collectPoints(child, points);
+    }
+  }
 
   XMLHttpRequest.prototype.send = function () {
     this.addEventListener('load', function () {
       try {
+        // responseText throws for non-text responseTypes (blob, arraybuffer…).
         const responseText = this.responseText;
 
         // Avoid parsing obviously non-JSON responses.
@@ -27,9 +46,12 @@
         const trimmed = responseText.trimStart();
         if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) return;
 
-        const data = JSON.parse(responseText);
+        const points = Object.create(null);
+        collectPoints(JSON.parse(responseText), points);
+        if (Object.keys(points).length === 0) return; // nothing useful in this response
+
         window.dispatchEvent(new CustomEvent('__ptp_xhr__', {
-          detail: { url: this._ptpUrl, data: data }
+          detail: { points: { ...points } }
         }));
       } catch (e) { /* not JSON, skip */ }
     });

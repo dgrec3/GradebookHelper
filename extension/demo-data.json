@@ -1,0 +1,23 @@
+{
+  "_note": "Made-up class for the demo page. Medical (M) only appears in the final grade, as in PowerTeacher. Assignment records use the same shape PowerTeacher Pro's API returns, so the real injected.js reads points possible from them.",
+  "assignments": [
+    { "assignmentid": 9001, "name": "Unit 1 Quiz",   "_assignmentsections": [{ "scoreentrypoints": 20 }] },
+    { "assignmentid": 9002, "name": "Homework 1.4",  "_assignmentsections": [{ "scoreentrypoints": 10 }] },
+    { "assignmentid": 9003, "name": "Lab: Slopes",   "_assignmentsections": [{ "scoreentrypoints": 25 }] },
+    { "assignmentid": 9004, "name": "Unit 1 Test",   "_assignmentsections": [{ "scoreentrypoints": 100 }] },
+    { "assignmentid": 9005, "name": "Warm-ups Wk 3", "_assignmentsections": [{ "scoreentrypoints": 5 }] },
+    { "assignmentid": 9006, "name": "Project Draft", "_assignmentsections": [{ "scoreentrypoints": 50 }] }
+  ],
+  "students": [
+    { "name": "Avery Stone",   "scores": ["19", "10", "24", "93", "5", { "score": "47", "note": true }] },
+    { "name": "Blake Rivera",  "scores": [{ "score": "12", "flags": ["late"] }, "8", "17", "68", "4", { "score": "0", "flags": ["missing"] }] },
+    { "name": "Casey Morgan",  "scores": ["15", { "score": "", "flags": ["exempt"] }, "20", "77", "3", "38"] },
+    { "name": "Devon Patel",   "scores": [{ "score": "", "flags": ["exempt"] }, { "score": "", "flags": ["exempt"] }, "22", { "score": "", "flags": ["exempt"] }, "4", "45"], "finalCode": "M" },
+    { "name": "Emery Brooks",  "scores": ["17", "9", { "score": "13", "flags": ["late", "incomplete"] }, "81", "5", "44"] },
+    { "name": "Finley Chen",   "scores": [{ "score": "11", "flags": ["absent"] }, "6", "18", { "score": "59", "note": true }, "2", "33"] },
+    { "name": "Harper Nguyen", "scores": ["20", "10", "25", "98", "5", "50"] },
+    { "name": "Jordan Ellis",  "scores": ["14", { "score": "0", "flags": ["missing", "late"] }, "19", "74", "4", "36"] },
+    { "name": "Kai Thompson",  "scores": ["16", { "score": "7", "note": true }, "21", "85", { "score": "", "flags": ["incomplete"] }, "41"] },
+    { "name": "Logan Reyes",   "scores": ["10", "5", "12", "52", { "score": "1", "flags": ["missing", "late", "incomplete", "absent"] }, { "score": "18", "flags": ["late"] }] }
+  ]
+}

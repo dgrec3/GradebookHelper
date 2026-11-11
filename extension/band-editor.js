@@ -6,7 +6,8 @@
  * onChange receives a fresh copy of the band array after every edit.
  */
 (function (global) {
-  function createBandEditor(container, onChange) {
+  // getStrength() returns the current color strength so swatches match the gradebook.
+  function createBandEditor(container, onChange, getStrength = () => 100) {
     let bands = [];
 
     function emit() {
@@ -37,8 +38,7 @@
     }
 
     function updateSwatch(swatch, band) {
-      swatch.style.backgroundColor = band.color;
-      swatch.style.color = PTPSettings.contrastTextColor(band.color);
+      PTPSettings.paintSwatch(swatch, band.color, getStrength());
       swatch.classList.toggle('muted', !band.enabled);
     }
 

@@ -1,5 +1,5 @@
 /**
- * PowerSchool Enhancer — PowerTeacher Pro grade highlighting
+ * Gradebook Enhancer for PowerTeacher Pro — grade highlighting
  *
  * Colors scoresheet cells using teacher-defined bands (min % / max % / color),
  * optional final-grade highlighting, optional score-code colors (e.g. M = Medical)
@@ -47,6 +47,140 @@
     }
   `;
 
+  // Text tags: turn each visible PowerTeacher flag square into a small text tag
+  // (M, L, I, A or the words MISS, LATE…) on the cell's left edge, so the score
+  // stays centered. CSS only, switched by classes on <html>, so no nodes are
+  // added to PowerTeacher's Angular-owned cells.
+  // PowerTeacher markup (confirmed 2026-11-10): Missing/Incomplete/Absent/Late
+  // are 8x8 colored spans positioned absolutely inside span.flag-container,
+  // which is stretched over the cell. Exempt sits directly in a.keypad-link.
+  // The container becomes a fixed 2x2 mini-grid of 8px slots (rows are only
+  // 18px tall), and each flag always lands in the same slot (the teacher's
+  // layout), so several flags never pile onto each other or the score:
+  //     Missing    | Incomplete
+  //     Late       | Absent
+  // Exempt usually stands alone on a blank score, so it sits centered on the
+  // left edge. Earlier layouts that failed: inline after the score (pushed
+  // the score off-center), flex wrap and auto-flow grids (4 tags spilled over
+  // the score). See STRATEGIES_THAT_WONT_WORK.md.
+  const FLAG_TAGS_ROOT_CLASS = 'ptp-flag-tags';
+  const FLAG_TAGS_FILLED_CLASS = 'ptp-flag-tags-filled';
+  const FLAG_TAGS_WORD_CLASS = 'ptp-flag-tags-word';
+  // 8px slots: two stacked = 16px, leaving 1px above and below inside the
+  // 18px row (9px slots touched the cell border and the tops got clipped).
+  const FLAG_SLOT_PX = 8;
+  const FLAG_SLOTS = {
+    missing: 'grid-row: 1; grid-column: 1;',
+    incomplete: 'grid-row: 1; grid-column: 2;',
+    late: 'grid-row: 2; grid-column: 1;',
+    absent: 'grid-row: 2; grid-column: 2;'
+  };
+  // Letter tags fill one slot exactly (border-box); 7px bold letters on a 6px
+  // line fit inside the 1px border.
+  const TAG_BOX = `font: 700 7px/6px Arial, sans-serif !important; text-transform: uppercase;
+      text-align: center; box-sizing: border-box !important;
+      width: ${FLAG_SLOT_PX}px !important; height: ${FLAG_SLOT_PX}px !important; padding: 0 !important;
+      border: 1px solid currentColor !important; border-radius: 2px !important;`;
+  const FLAG_CONTAINER_CSS = `
+    html.${FLAG_TAGS_ROOT_CLASS} td.keypad-cell span.flag-container {
+      /* 1px from the cell border: narrow columns (sidebar open) need every pixel. */
+      position: absolute !important; top: 0 !important; bottom: 0 !important;
+      left: 1px !important; right: auto !important; width: auto !important; height: auto !important;
+      display: grid !important;
+      grid-template-rows: ${FLAG_SLOT_PX}px ${FLAG_SLOT_PX}px !important;
+      /* Fixed widths keep empty slots open, so a lone Absent still sits in
+         the bottom-right slot instead of sliding left. */
+      grid-template-columns: ${FLAG_SLOT_PX}px ${FLAG_SLOT_PX}px !important;
+      align-content: center !important; justify-items: start !important;
+      gap: 0 1px !important; pointer-events: none;
+    }
+    html.${FLAG_TAGS_ROOT_CLASS} td.keypad-cell a.keypad-link > span.ps-exempt-flag-purple:not(.ng-hide) {
+      position: absolute !important; left: 1px !important; right: auto !important;
+      top: 50% !important; bottom: auto !important; transform: translateY(-50%);
+    }
+    /* Word tags (MISS, LATE…) keep the slot height but size to their text,
+       so their columns size to content. Doubled classes out-rank the
+       per-flag ::before rules. */
+    html.${FLAG_TAGS_WORD_CLASS} td.keypad-cell span.flag-container {
+      grid-template-columns: max-content max-content !important;
+    }
+    html.${FLAG_TAGS_ROOT_CLASS}.${FLAG_TAGS_WORD_CLASS} td.keypad-cell span.ps-icon.ps-icon:not(.ng-hide)::before {
+      width: auto !important; padding: 0 2px !important; font-size: 6px !important;
+    }`;
+  const FLAG_TAG_CSS = FLAG_CONTAINER_CSS + PTPSettings.FLAG_DEFINITIONS.map(def => {
+    const icon = `html.${FLAG_TAGS_ROOT_CLASS} td.keypad-cell span.ps-icon.${def.iconClass}:not(.ng-hide)`;
+    const slot = FLAG_SLOTS[def.key] || '';
+    return `
+    ${icon} {
+      background: none !important; width: auto !important; height: auto !important;
+      min-width: 0 !important; min-height: 0 !important; overflow: visible !important;
+      display: block !important; font-size: 0 !important; line-height: 0 !important;
+      margin: 0 !important; z-index: 1;
+    }
+    html.${FLAG_TAGS_ROOT_CLASS} td.keypad-cell span.flag-container > span.ps-icon.${def.iconClass}:not(.ng-hide) {
+      position: static !important; ${slot}
+    }
+    ${icon} > * , ${icon}::after { display: none !important; }
+    html.${FLAG_TAGS_WORD_CLASS} td.keypad-cell span.ps-icon.${def.iconClass}:not(.ng-hide)::before {
+      content: '${def.tag}' !important;
+    }
+    ${icon}::before {
+      content: '${def.letter}'; display: block !important;
+      position: static !important;
+      background: none !important; color: inherit !important;
+      ${TAG_BOX}
+    }`;
+  }).join('') + `
+    /* One-letter Incomplete tag: a serif "I" has bars on top and bottom, so it
+       can't be mistaken for a lowercase l or a 1. Doubled classes out-rank the
+       per-flag font shorthand; word mode ("INC") keeps the normal font. */
+    html.${FLAG_TAGS_ROOT_CLASS}:not(.${FLAG_TAGS_WORD_CLASS}) td.keypad-cell span.ps-icon.ps-incomplete-flag.ps-incomplete-flag:not(.ng-hide)::before {
+      font-family: Georgia, 'Times New Roman', serif !important;
+    }
+    /* Filled style: white text on a dark pill reads on every cell color.
+       Doubled classes out-rank the per-flag ::before rules (background: none). */
+    html.${FLAG_TAGS_ROOT_CLASS}.${FLAG_TAGS_FILLED_CLASS} td.keypad-cell span.ps-icon.ps-icon:not(.ng-hide)::before {
+      background: #2f3b48 !important; color: #ffffff !important;
+      border-color: #2f3b48 !important; text-shadow: none !important;
+    }`;
+
+  // Row tracking aids. PowerTeacher puts each student in tr#std<id> (name in
+  // th.student-col, then grade cells) and shades every other row with a
+  // translucent gray on the <tr>. Hover outlines the row; dividers are bottom
+  // borders (a heavier one every 5 rows helps counting down the list).
+  const ROW_HOVER_CLASS = 'ptp-row-hover';
+  const ROW_LINES_CLASS = 'ptp-row-lines';
+  const ROW_FIVES_CLASS = 'ptp-row-fives';
+  const STUDENT_ROW = 'table.gridTable tr[id^="std"]';
+  const ROW_CSS = `
+    html.${ROW_LINES_CLASS} ${STUDENT_ROW} > td,
+    html.${ROW_LINES_CLASS} ${STUDENT_ROW} > th {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.18) !important;
+    }
+    html.${ROW_FIVES_CLASS} ${STUDENT_ROW}:nth-child(5n) > td,
+    html.${ROW_FIVES_CLASS} ${STUDENT_ROW}:nth-child(5n) > th {
+      border-bottom: 2px solid rgba(0, 0, 0, 0.5) !important;
+    }
+    html.${ROW_HOVER_CLASS} ${STUDENT_ROW}:hover > td,
+    html.${ROW_HOVER_CLASS} ${STUDENT_ROW}:hover > th {
+      box-shadow: inset 0 2px 0 #0b5cad, inset 0 -2px 0 #0b5cad !important;
+    }
+    html.${ROW_HOVER_CLASS} ${STUDENT_ROW}:hover > th {
+      background-color: rgba(11, 92, 173, 0.14) !important;
+    }`;
+
+  // Comment badge: PowerTeacher's comment bubble (span.ps-notes-flag, a 12px
+  // sprite in the cell's top-right, drawn at 60% opacity) fades into colored
+  // cells. Keep the same icon but at full opacity on a white badge with a navy
+  // ring so it stands out on any color.
+  const COMMENT_BADGE_CLASS = 'ptp-comment-badge';
+  const COMMENT_CSS = `
+    html.${COMMENT_BADGE_CLASS} td.keypad-cell span.ps-notes-flag:not(.ng-hide) {
+      background-color: #ffffff !important; border-radius: 3px; opacity: 1 !important;
+      box-shadow: 0 0 0 1px #ffffff, 0 0 0 2px #1f3a5f, 0 1px 3px rgba(0, 0, 0, 0.45);
+      top: 1px !important; right: 1px !important; z-index: 2;
+    }`;
+
   // Used when split segments disagree on black vs white text: black text with
   // a white halo stays readable across every segment.
   const MIXED_TEXT_SHADOW = '0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff';
@@ -61,7 +195,7 @@
     if (document.getElementById(STYLE_ELEMENT_ID)) return;
     const style = document.createElement('style');
     style.id = STYLE_ELEMENT_ID;
-    style.textContent = HIGHLIGHT_CSS;
+    style.textContent = HIGHLIGHT_CSS + FLAG_TAG_CSS + ROW_CSS + COMMENT_CSS;
     (document.head || document.documentElement).appendChild(style);
   }
 
@@ -73,25 +207,15 @@
     script.remove();
   }
 
-  // ── 2. Recursively walk any JSON object looking for assignment records ─────
-  function extractPoints(obj) {
-    if (!obj || typeof obj !== 'object') return;
-
-    // Found an assignment record — points live in _assignmentsections[0].scoreentrypoints
-    if (obj.assignmentid != null &&
-        Array.isArray(obj._assignmentsections) &&
-        obj._assignmentsections.length > 0) {
-      const pts = parseFloat(obj._assignmentsections[0].scoreentrypoints);
-      if (!Number.isNaN(pts)) {
-        pointsMap[String(obj.assignmentid)] = pts;
-      }
-    }
-
-    for (const val of Object.values(obj)) {
-      if (Array.isArray(val)) {
-        val.forEach(extractPoints);
-      } else if (val && typeof val === 'object') {
-        extractPoints(val);
+  // ── 2. Merge points relayed from injected.js ───────────────────────────────
+  // injected.js already reduced each response to { assignmentId: points }, so
+  // no student data reaches this script. Values are re-checked because any
+  // page script could dispatch this event.
+  function mergePoints(points) {
+    if (!points || typeof points !== 'object') return;
+    for (const [assignmentId, pts] of Object.entries(points)) {
+      if (typeof pts === 'number' && Number.isFinite(pts)) {
+        pointsMap[String(assignmentId)] = pts;
       }
     }
   }
@@ -198,10 +322,12 @@
     return `linear-gradient(to right, ${stops.join(', ')})`;
   }
 
-  function applyHighlight(cell, colors) {
+  // colors are "#rrggbb" settings colors; strength (percent) makes them
+  // translucent so the row's own gray shading still shows through.
+  function applyHighlight(cell, colors, strength) {
     // Only touch the DOM when a cell's colors actually change, so rescans stay
     // cheap and don't feed the MutationObserver.
-    const key = colors.join(',');
+    const key = colors.length ? `${colors.join(',')}@${strength}` : '';
     const oldKey = cell.dataset.ptpHighlight || '';
     if (oldKey === key) return;
 
@@ -212,10 +338,12 @@
       return;
     }
 
-    const textColors = new Set(colors.map(PTPSettings.contrastTextColor));
+    // Text color is judged on what the translucent color looks like on white.
+    const textColors = new Set(colors.map(color =>
+      PTPSettings.contrastTextColor(PTPSettings.blendOverWhite(color, strength))));
     const mixed = textColors.size > 1;
 
-    cell.style.setProperty('--ptp-bg', backgroundFor(colors));
+    cell.style.setProperty('--ptp-bg', backgroundFor(colors.map(color => PTPSettings.withStrength(color, strength))));
     cell.style.setProperty('--ptp-fg', mixed ? '#000000' : [...textColors][0]);
     cell.style.setProperty('--ptp-shadow', mixed ? MIXED_TEXT_SHADOW : 'none');
     cell.classList.add('ptp-hl');
@@ -233,7 +361,7 @@
     cells.forEach(cell => {
       const isFinalGrade = cell.matches(FINAL_GRADE_CELL_SELECTOR);
       const colors = matchedColors(cell, isFinalGrade);
-      applyHighlight(cell, colors);
+      applyHighlight(cell, colors, settings.colorStrength);
       if (colors.length) counts[colors.length] = (counts[colors.length] || 0) + 1;
     });
 
@@ -282,7 +410,7 @@
 
   // ── 5. Listen for XHR data relayed from injected.js ────────────────────────
   window.addEventListener('__ptp_xhr__', (e) => {
-    extractPoints(e.detail.data);
+    mergePoints(e.detail?.points);
     scheduleHighlight();
   });
 
@@ -292,9 +420,24 @@
   });
 
   // ── 7. Settings: load once, then react live to popup/options edits ─────────
+  // Tags and row aids are switched by classes on <html>. They follow the
+  // master on/off switch but not flag colors or split highlighting.
+  function applyRootClasses() {
+    const root = document.documentElement.classList;
+    const tagsOn = settings.enabled && settings.flagTags;
+    root.toggle(FLAG_TAGS_ROOT_CLASS, tagsOn);
+    root.toggle(FLAG_TAGS_FILLED_CLASS, tagsOn && settings.flagTagStyle === 'filled');
+    root.toggle(FLAG_TAGS_WORD_CLASS, tagsOn && settings.flagTagLength === 'word');
+    root.toggle(ROW_HOVER_CLASS, settings.enabled && settings.rowHover);
+    root.toggle(ROW_LINES_CLASS, settings.enabled && ['every', 'both'].includes(settings.rowDividers));
+    root.toggle(ROW_FIVES_CLASS, settings.enabled && ['five', 'both'].includes(settings.rowDividers));
+    root.toggle(COMMENT_BADGE_CLASS, settings.enabled && settings.commentBadge);
+  }
+
   function useSettings(newSettings) {
     settings = newSettings;
     applyStyles();
+    applyRootClasses();
     highlightCells();
   }
 
@@ -313,6 +456,7 @@
   PTPSettings.load().then(loaded => {
     settings = loaded;
     applyStyles();
+    applyRootClasses();
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', scheduleHighlight, { once: true });
     } else {

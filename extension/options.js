@@ -17,6 +17,14 @@
   const flagsContainer = document.getElementById('flags');
   const scoreCodesContainer = document.getElementById('score-codes');
   const multiEnabled = document.getElementById('multi-enabled');
+  const flagTags = document.getElementById('flag-tags');
+  const flagTagStyle = document.getElementById('flag-tag-style');
+  const flagTagLength = document.getElementById('flag-tag-length');
+  const colorStrength = document.getElementById('color-strength');
+  const colorStrengthValue = document.getElementById('color-strength-value');
+  const rowHover = document.getElementById('row-hover');
+  const rowDividers = document.getElementById('row-dividers');
+  const commentBadge = document.getElementById('comment-badge');
   const multiMax = document.getElementById('multi-max');
   const multiOptions = document.getElementById('multi-options');
   const multiPreview = document.getElementById('multi-preview-swatch');
@@ -25,11 +33,11 @@
   const assignmentEditor = createBandEditor(document.getElementById('assignment-bands'), bands => {
     settings.assignmentBands = bands;
     scheduleSave();
-  });
+  }, () => settings.colorStrength);
   const finalEditor = createBandEditor(finalBandsContainer, bands => {
     settings.finalGrade.bands = bands;
     scheduleSave();
-  });
+  }, () => settings.colorStrength);
 
   function scheduleSave() {
     saveStatus.textContent = 'Saving…';
@@ -41,7 +49,7 @@
         saveStatus.textContent = 'Saved';
       } catch (error) {
         saveStatus.textContent = 'Could not save — try again';
-        console.error('[PowerSchool Enhancer] Save failed.', error);
+        console.error('[Gradebook Enhancer] Save failed.', error);
       }
     }, SAVE_DEBOUNCE_MS);
   }
@@ -72,8 +80,7 @@
       color.setAttribute('aria-label', `${def.label} color`);
 
       function paint() {
-        swatch.style.backgroundColor = flag.color;
-        swatch.style.color = PTPSettings.contrastTextColor(flag.color);
+        PTPSettings.paintSwatch(swatch, flag.color, settings.colorStrength);
         swatch.classList.toggle('muted', !flag.enabled);
       }
 
@@ -143,8 +150,7 @@
 
       function paint() {
         swatch.textContent = entry.code.trim().toUpperCase() || '?';
-        swatch.style.backgroundColor = entry.color;
-        swatch.style.color = PTPSettings.contrastTextColor(entry.color);
+        PTPSettings.paintSwatch(swatch, entry.color, settings.colorStrength);
         swatch.classList.toggle('muted', !entry.enabled);
       }
 
@@ -211,6 +217,7 @@
     ].slice(0, settings.multiHighlight.max);
     const share = 100 / sampleColors.length;
     multiPreview.style.background = `linear-gradient(to right, ${sampleColors
+      .map(color => PTPSettings.blendOverWhite(color, settings.colorStrength))
       .map((color, index) => `${color} ${index * share}% ${(index + 1) * share}%`)
       .join(', ')})`;
   }
@@ -218,6 +225,14 @@
   function renderAll() {
     renderMultiHighlight();
     enabledInput.checked = settings.enabled;
+    flagTags.checked = settings.flagTags;
+    flagTagStyle.value = settings.flagTagStyle;
+    flagTagLength.value = settings.flagTagLength;
+    colorStrength.value = String(settings.colorStrength);
+    colorStrengthValue.textContent = `${settings.colorStrength}%`;
+    rowHover.checked = settings.rowHover;
+    rowDividers.value = settings.rowDividers;
+    commentBadge.checked = settings.commentBadge;
     finalInclude.checked = settings.finalGrade.include;
     finalSame.checked = settings.finalGrade.useAssignmentBands;
     assignmentEditor.render(settings.assignmentBands);
@@ -229,6 +244,43 @@
 
   enabledInput.addEventListener('change', () => {
     settings.enabled = enabledInput.checked;
+    scheduleSave();
+  });
+
+  flagTagLength.addEventListener('change', () => {
+    settings.flagTagLength = flagTagLength.value;
+    scheduleSave();
+  });
+
+  flagTagStyle.addEventListener('change', () => {
+    settings.flagTagStyle = flagTagStyle.value;
+    scheduleSave();
+  });
+
+  // Re-render while dragging so every swatch previews the new strength.
+  colorStrength.addEventListener('input', () => {
+    settings.colorStrength = Number(colorStrength.value);
+    renderAll();
+    scheduleSave();
+  });
+
+  rowHover.addEventListener('change', () => {
+    settings.rowHover = rowHover.checked;
+    scheduleSave();
+  });
+
+  commentBadge.addEventListener('change', () => {
+    settings.commentBadge = commentBadge.checked;
+    scheduleSave();
+  });
+
+  rowDividers.addEventListener('change', () => {
+    settings.rowDividers = rowDividers.value;
+    scheduleSave();
+  });
+
+  flagTags.addEventListener('change', () => {
+    settings.flagTags = flagTags.checked;
     scheduleSave();
   });
 

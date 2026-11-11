@@ -1,14 +1,25 @@
 {
   "manifest_version": 3,
-  "name": "PowerSchool Enhancer",
+  "name": "Gradebook Enhancer for PowerTeacher Pro",
+  "short_name": "Gradebook Enhancer",
   "version": "1.0",
-  "description": "Highlight grades in the PowerTeacher Pro scoresheet with your own color bands, final-grade highlighting and flag colors.",
+  "description": "Color-code PowerTeacher Pro scoresheet grades with your own thresholds, flag colors and split highlights. Not by PowerSchool.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "permissions": [
     "storage"
   ],
   "action": {
-    "default_title": "PowerSchool Enhancer",
-    "default_popup": "popup.html"
+    "default_title": "Gradebook Enhancer",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
   },
   "options_ui": {
     "page": "options.html",
