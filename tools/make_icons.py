@@ -67,16 +67,22 @@ def draw(with_initials: bool) -> Image.Image:
     return image
 
 
-OUT.mkdir(parents=True, exist_ok=True)
-with_dg, without_dg = draw(True), draw(False)
-for size in (16, 32):
-    without_dg.resize((size, size), Image.LANCZOS).save(OUT / f"icon{size}.png")
-for size in (48, 128):
-    with_dg.resize((size, size), Image.LANCZOS).save(OUT / f"icon{size}.png")
+def main():
+    OUT.mkdir(parents=True, exist_ok=True)
+    with_dg, without_dg = draw(True), draw(False)
+    for size in (16, 32):
+        without_dg.resize((size, size), Image.LANCZOS).save(OUT / f"icon{size}.png")
+    for size in (48, 128):
+        with_dg.resize((size, size), Image.LANCZOS).save(OUT / f"icon{size}.png")
 
-# Store icon: Google asks for 128x128 with the artwork inside 96x96 (16 px transparent padding).
-store_icon = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
-store_icon.paste(with_dg.resize((96, 96), Image.LANCZOS), (16, 16))
-(ROOT / "store").mkdir(exist_ok=True)
-store_icon.save(ROOT / "store" / "store-icon-128.png")
-print("icons written")
+    # Store icon: Google asks for 128x128 with the artwork inside 96x96 (16 px transparent padding).
+    store_icon = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
+    store_icon.paste(with_dg.resize((96, 96), Image.LANCZOS), (16, 16))
+    (ROOT / "store").mkdir(exist_ok=True)
+    store_icon.save(ROOT / "store" / "store-icon-128.png")
+    print("icons written")
+
+
+# Only redraw the icons when run directly (make_profile_pic.py imports draw()).
+if __name__ == "__main__":
+    main()

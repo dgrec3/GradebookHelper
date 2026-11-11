@@ -38,6 +38,8 @@ Everything runs inside your browser. The extension does not collect, store or se
 WORKS WITH
 PowerTeacher Pro scoresheets on powerschool.com addresses (https://yourdistrict.powerschool.com/teachers/...). Districts that use a custom web address are not supported yet.
 
+Gradebook Enhancer is free. If it saves you time, you can support it at buymeacoffee.com/dgrec3m (completely optional; every feature works without it).
+
 Gradebook Enhancer is an independent tool for teachers. It is not affiliated with, endorsed by or sponsored by PowerSchool. PowerSchool and PowerTeacher are trademarks of their respective owners.
 ```
 

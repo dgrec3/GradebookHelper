@@ -219,3 +219,12 @@ input[type="color"] {
   background: none; border: 1px solid var(--border); border-radius: 4px; color: var(--text); cursor: pointer;
 }
 .color-custom-input { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+
+/* ── Support link (settings footer and popup) ───────────────────── */
+.support-footer {
+  max-width: 680px; margin: 24px auto 0; padding-top: 14px; border-top: 1px solid var(--border);
+  text-align: center; font-size: 13px; color: var(--muted-text);
+}
+.support-footer a, .support-link { color: var(--accent); font-weight: 600; text-decoration: none; }
+.support-footer a:hover, .support-link:hover { text-decoration: underline; }
+.support-link { display: block; margin-top: 10px; text-align: center; font-size: 12px; }

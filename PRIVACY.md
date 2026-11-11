@@ -23,6 +23,9 @@ Nothing. The extension makes no network requests of its own and loads no remote 
 ## Sharing
 No data is shared with or sold to anyone, because no data is collected.
 
+## Support link
+The settings page and toolbar popup include an optional "Buy me a coffee" link. It is a plain link to buymeacoffee.com that opens in a new tab only if you click it; the extension sends nothing to that site. Anything you do there is covered by Buy Me a Coffee's own privacy policy.
+
 ## Permissions
 - **storage**: saves your highlight settings.
 - **Access to PowerTeacher Pro pages** (`https://*.powerschool.com/teachers/*`): needed to color the scoresheet. The extension does not run on any other site.
