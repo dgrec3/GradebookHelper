@@ -11,6 +11,14 @@ Chrome extension "Gradebook Enhancer for PowerTeacher Pro" (repo dgrec3/Gradeboo
 1. Test 1.0.1 in Chrome: turn off the store copy, use Load unpacked on `extension/`, then refresh the scoresheet.
 2. If it looks good, upload the zip as a new version in the Developer Dashboard.
 
+## Promo videos (done 2026-11-19)
+- `py tools/make_promo_video.py [15|45]` builds Instagram Reels (1080x1920) into `dist/`:
+  - `promo-reel-15s.mp4`: a 15-second teaser.
+  - `promo-reel-45s.mp4`: a 45-second feature tour.
+  - `-silent` copies of both, for adding music in Instagram or Canva.
+- The music comes from `tools/promo_music.py`: synthesized pop at 120 BPM, with the drop on the color sweep at 3.5 s. The user approved this version. The end-card logo is `tools/promo/logo.png`.
+- Weave (Figma) AI music didn't work: it kept saying the account wasn't linked.
+
 ## Still open (only if asked)
 - Put the real extension ID into the reviewer instructions in `store/LISTING.md` (replace EXTENSION_ID).
 - `PRIVACY.md` still has the "[your contact email]" placeholder. Ask the user which email to use.

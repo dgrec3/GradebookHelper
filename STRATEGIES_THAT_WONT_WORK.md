@@ -20,3 +20,9 @@
 - **Watching only for added *element* nodes:** Angular often replaces the text node inside a score's `<var>`. The added node is text, so an element-only check missed it and grades kept stale colors. Also check `mutation.target.closest(gradeCell)`.
 - **Relying on one color pass after the data XHR:** on slow loads, PowerTeacher renders the grid after the data arrives, so the pass found no cells. The watcher also missed the build because cells are inserted bare (no `data-column-identifier`, no score yet). Watch for any `td.keypad-cell` or `table.gridTable`, and keep a cheap periodic safety pass.
 - **Marking painted cells with a class and trusting a "painted" record to skip them:** if the class or style is rewritten, the cell stays blank forever. Key the CSS on a data attribute, and verify the paint before skipping.
+
+## Promo video music (tools/promo_music.py)
+- **Sine-wave plucks arpeggiating in C major:** the user called it "kiddie." Use a minor-leaning pop progression (Dm9–Bbmaj7–F–Csus4) with an FM electric piano instead.
+- **Raw unfiltered saw chords, noise "hats" made with `np.diff`, and `tanh` on the whole mix:** harsh and amateur; the user said it was "pretty bad." What makes a synthesized track sound produced: filtered detuned pads, a pitched kick, band-passed snare/clap, high-passed hats, reverb, sidechain pumping, and bus compression.
+- **Mixing by ear-less guesswork:** the first proper mix put about 60% of the energy below 80 Hz, which phone speakers can't play. Measure the band energy and keep it near a pop balance (each band below 1 kHz around −5 dB, 1–4 kHz around −15 dB, 4–10 kHz around −21 dB), and high-pass below 38 Hz.
+- **Weave (Figma) AI music:** it kept answering "Figma account not linked" even after the user linked and reconnected (2026-11-19). Don't plan on it.

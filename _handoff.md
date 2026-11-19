@@ -58,6 +58,13 @@ Root (not packaged): `FEATURES.md`, `CHANGELOG.md`, `STRATEGIES_THAT_WONT_WORK.m
 ## Regenerating store images
 `py tools/make_screenshots.py` (plain `py`, because PIL needs user site-packages). It copies `extension/` to a temp folder, adds a chrome.* storage shim (presets default / bands / rows / codes; `only=<card title>|…` shows single options cards; `hover=<row id>` fakes the hover outline), serves it on 127.0.0.1:8766, and captures with headless **Edge** at a 4/3 device scale. Each of the 5 store shots = scoresheet (960x555 CSS) + 60px caption bar + a trimmed settings card or popup overlay (max 620px wide). The shot list lives in `SHOTS` at the top of the script. Headless Chrome exits with code 21 on this machine.
 
+## Promo videos (2026-11-19)
+`py tools/make_promo_video.py [15|45]` builds Instagram Reels (1080x1920, 30 fps) in `dist/` from the demo page: a 15 s teaser and a 45 s feature tour. Each is made both with music and silent.
+- How it works: it reuses `make_screenshots.py` (shim + headless Edge). Scenes are listed in `CUTS`, and every cut sits on a half-second mark so it lands on a beat at 120 BPM.
+- Music: `tools/promo_music.py`, numpy only. FM electric piano, pad, sub bass, drums, reverb, sidechain and a limiter. `MUSIC_CUES` sets the drop, breakdown and outro.
+- Logo: `tools/promo/logo.png` (the DG EdTech Tools badge) on the end card.
+- Needs: `py -m pip install --user imageio-ffmpeg`.
+
 ## Next steps
 1. Reload the unpacked `extension` folder in Chrome and smoke-test on a real scoresheet: colors, tags, row lines, popup and options saving. Open `chrome-extension://<ID>/demo.html` to check the reviewer demo.
    - Publish PRIVACY.md as a page on sites.google.com/view/dg3dev and fill in the contact email.
