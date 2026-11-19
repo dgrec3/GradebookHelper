@@ -37,6 +37,9 @@
 
   XMLHttpRequest.prototype.send = function () {
     this.addEventListener('load', function () {
+      // Tell the content script a request finished so it can recolor after
+      // saves and loads. Deliberately carries no data.
+      window.dispatchEvent(new Event('__ptp_xhr_done__'));
       try {
         // responseText throws for non-text responseTypes (blob, arraybuffer…).
         const responseText = this.responseText;

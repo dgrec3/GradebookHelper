@@ -25,6 +25,7 @@ Root (not packaged): `FEATURES.md`, `CHANGELOG.md`, `STRATEGIES_THAT_WONT_WORK.m
 ## PowerTeacher Pro DOM (confirmed 2026-10-30, hcst.powerschool.com)
 - Assignment cell: `td.score-assignment-col[data-column-identifier=<assignmentId>]`, score in `a.keypad-link > var`.
 - Final grade cell: `td.final-grade-info-cell` (`cell-col-id="courseGrade"`). Percent is in `.final-grade-info .percent` (e.g. "57%"), letter grade in `.grade`.
+- Pinned header (measured 2026-11-18): while scrolling, PowerTeacher shows a copy of the header in `div.sticky-header.table-sticky-header` (position: fixed, z-index: 1). Keep our cell content at z-index auto so it stays underneath.
 - Flag markup (measured 2026-11-10): cells are 100x18px. Missing, Late, Incomplete and Absent are 8x8 background-colored spans in a 2x2 grid (positioned absolutely inside `span.flag-container`, which is stretched over the cell). Exempt and Collected sit directly in `a.keypad-link`. Comments (`ps-notes-flag corner-top-right`) is a 12px background image in the top-right.
 - Flags: every cell renders all flag icons and hides unused ones with `ng-hide`: `ps-missing-flag`, `ps-incomplete-flag`, `ps-absent-flag`, `ps-late-flag`, `ps-exempt-flag-purple`, `ps-check-green` (collected), `ps-notes-flag` (comments). An exempt final grade adds class `exempt` to its `a.keypad-link`.
 

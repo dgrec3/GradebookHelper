@@ -34,13 +34,15 @@
   let settings = null;
 
   // ── Styles: one static <style> tag ─────────────────────────────────────────
-  // Every highlighted cell gets the ptp-hl class plus per-cell CSS variables
-  // (--ptp-bg / --ptp-fg), so one static stylesheet serves any color and
-  // color strength. The td.keypad-cell prefix keeps specificity at least as
+  // Every highlighted cell gets a data-ptp-highlight attribute plus per-cell
+  // CSS variables (--ptp-bg / --ptp-fg), so one static stylesheet serves any
+  // color and color strength. The selector keys on the data attribute, not a
+  // class: Angular can rewrite a cell's class list, which used to strand
+  // cells uncolored. The td.keypad-cell prefix keeps specificity at least as
   // high as v1.2.1's selectors so PowerTeacher's own styles don't win.
   const HIGHLIGHT_CSS = `
-    td.keypad-cell.ptp-hl { background: var(--ptp-bg) !important; }
-    td.keypad-cell.ptp-hl, td.keypad-cell.ptp-hl * { color: var(--ptp-fg) !important; }
+    td.keypad-cell[data-ptp-highlight] { background: var(--ptp-bg) !important; }
+    td.keypad-cell[data-ptp-highlight], td.keypad-cell[data-ptp-highlight] * { color: var(--ptp-fg) !important; }
   `;
 
   // Text tags: turn each visible PowerTeacher flag square into a small text tag
@@ -111,7 +113,7 @@
       background: none !important; width: auto !important; height: auto !important;
       min-width: 0 !important; min-height: 0 !important; overflow: visible !important;
       display: block !important; font-size: 0 !important; line-height: 0 !important;
-      margin: 0 !important; z-index: 1;
+      margin: 0 !important; z-index: auto !important; /* see COMMENT_CSS: stay under the pinned header */
     }
     html.${FLAG_TAGS_ROOT_CLASS} td.keypad-cell span.flag-container > span.ps-icon.${def.iconClass}:not(.ng-hide) {
       position: static !important; ${slot}
@@ -145,7 +147,8 @@
   // translucent gray on the <tr>. Hover outlines the row; dividers are bottom
   // borders (a heavier one every 5 rows helps counting down the list). Their
   // darkness comes from --ptp-line (set from the teacher's slider); the
-  // every-5 line is 2.5× as dark so it always stands out, capped at 85% black.
+  // every-5 line is 2.5× as dark (and 2px thick) so it always stands out,
+  // capped at 95% black; at the darkest settings its thickness does the work.
   const ROW_HOVER_CLASS = 'ptp-row-hover';
   const ROW_LINES_CLASS = 'ptp-row-lines';
   const ROW_FIVES_CLASS = 'ptp-row-fives';
@@ -157,7 +160,7 @@
     }
     html.${ROW_FIVES_CLASS} ${STUDENT_ROW}:nth-child(5n) > td,
     html.${ROW_FIVES_CLASS} ${STUDENT_ROW}:nth-child(5n) > th {
-      border-bottom: 2px solid rgba(0, 0, 0, min(calc(var(--ptp-line, 0.18) * 2.5), 0.85)) !important;
+      border-bottom: 2px solid rgba(0, 0, 0, min(calc(var(--ptp-line, 0.18) * 2.5), 0.95)) !important;
     }
     html.${ROW_HOVER_CLASS} ${STUDENT_ROW}:hover > td,
     html.${ROW_HOVER_CLASS} ${STUDENT_ROW}:hover > th {
@@ -171,12 +174,16 @@
   // sprite in the cell's top-right, drawn at 60% opacity) fades into colored
   // cells. Keep the same icon but at full opacity on a white badge with a navy
   // ring so it stands out on any color.
+  // No z-index: PowerTeacher pins the header while scrolling with a copy of it
+  // in div.sticky-header (position: fixed, z-index: 1, measured 2026-11-18).
+  // A z-index of 1 or more made badges and tags float over that header. The
+  // badge still draws above the cell's own color without one.
   const COMMENT_BADGE_CLASS = 'ptp-comment-badge';
   const COMMENT_CSS = `
     html.${COMMENT_BADGE_CLASS} td.keypad-cell span.ps-notes-flag:not(.ng-hide) {
       background-color: #ffffff !important; border-radius: 3px; opacity: 1 !important;
       box-shadow: 0 0 0 1px #ffffff, 0 0 0 2px #1f3a5f, 0 1px 3px rgba(0, 0, 0, 0.45);
-      top: 1px !important; right: 1px !important; z-index: 2;
+      top: 1px !important; right: 1px !important; z-index: auto !important;
     }`;
 
   function finalBands() {
@@ -263,41 +270,43 @@
 
   // color is a "#rrggbb" settings color (or null); strength (percent) makes it
   // translucent so the row's own gray shading still shows through.
+  // Returns true when the cell was actually repainted.
   function applyHighlight(cell, color, strength) {
     // Only touch the DOM when a cell's color actually changes, so rescans stay
     // cheap and don't feed the MutationObserver.
     const key = color ? `${color}@${strength}` : '';
     const oldKey = cell.dataset.ptpHighlight || '';
-    if (oldKey === key) return;
+    // Skip only if the paint is really still there: if PowerTeacher rewrote
+    // the cell's style, the variables are gone even though the key matches.
+    if (oldKey === key && (!key || cell.style.getPropertyValue('--ptp-bg'))) return false;
 
     if (!key) {
-      cell.classList.remove('ptp-hl');
       ['--ptp-bg', '--ptp-fg'].forEach(name => cell.style.removeProperty(name));
       delete cell.dataset.ptpHighlight;
-      return;
+      return true;
     }
 
     // Text color is judged on what the translucent color looks like on white.
     cell.style.setProperty('--ptp-bg', PTPSettings.withStrength(color, strength));
     cell.style.setProperty('--ptp-fg', PTPSettings.contrastTextColor(PTPSettings.blendOverWhite(color, strength)));
-    cell.classList.add('ptp-hl');
     cell.dataset.ptpHighlight = key;
+    return true;
   }
 
   // ── 4. Highlight / un-highlight score cells ────────────────────────────────
   function highlightCells() {
     if (!settings) return;
 
-    let colored = 0;
+    let repainted = 0;
     const cells = document.querySelectorAll(ANY_GRADE_CELL_SELECTOR);
 
     cells.forEach(cell => {
       const color = matchedColor(cell, cell.matches(FINAL_GRADE_CELL_SELECTOR));
-      applyHighlight(cell, color, settings.colorStrength);
-      if (color) colored += 1;
+      if (applyHighlight(cell, color, settings.colorStrength)) repainted += 1;
     });
 
-    console.debug(`[PTP Grade Highlighter] Scanned ${cells.length} cells; ${colored} colored.`);
+    // Only log real work; the safety pass runs every few seconds.
+    if (repainted) console.debug(`[PTP Grade Highlighter] Repainted ${repainted} of ${cells.length} cells.`);
   }
 
   let debounce = null;
@@ -306,15 +315,36 @@
     debounce = setTimeout(highlightCells, HIGHLIGHT_DEBOUNCE_MS);
   }
 
+  // After moments that definitely change grades (a score typed in, a save or
+  // load finishing), PowerTeacher may update the page a little later. Scan
+  // soon, then once more as a safety net. Scans only touch cells whose color
+  // actually changed, so the extra pass is cheap.
+  const SETTLE_RECHECK_MS = 1200;
+  let settleTimer = null;
+  function highlightAfterChange() {
+    scheduleHighlight();
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(highlightCells, SETTLE_RECHECK_MS);
+  }
+
+  // PowerTeacher adds each cell first and fills in its data-column-identifier
+  // and score text afterwards, so also accept any keypad cell or grid table
+  // (matching only finished cells missed whole slow page loads).
+  const BUILDING_GRID_SELECTOR = 'td.keypad-cell, table.gridTable';
   function nodeLooksRelevant(node) {
     if (!node || node.nodeType !== Node.ELEMENT_NODE) return false;
 
-    return node.matches?.(`${ANY_GRADE_CELL_SELECTOR}, a.keypad-link, var, .percent, .grade`) ||
-      node.querySelector?.(`${ANY_GRADE_CELL_SELECTOR}, a.keypad-link > var`);
+    return node.matches?.(`${ANY_GRADE_CELL_SELECTOR}, ${BUILDING_GRID_SELECTOR}, a.keypad-link, var, .percent, .grade`) ||
+      node.querySelector?.(`${ANY_GRADE_CELL_SELECTOR}, ${BUILDING_GRID_SELECTOR}, a.keypad-link > var`);
   }
 
   function mutationLooksRelevant(mutation) {
     if (mutation.type === 'childList') {
+      // Angular often swaps the text node inside a score's <var> (or the
+      // course grade's .percent/.grade) instead of editing it. Those added
+      // nodes are plain text, so look at where the change happened, too.
+      // Missing this made some edited grades keep their old color.
+      if (mutation.target.closest?.(ANY_GRADE_CELL_SELECTOR)) return true;
       for (const node of mutation.addedNodes) {
         if (nodeLooksRelevant(node)) return true;
       }
@@ -337,8 +367,24 @@
   // ── 5. Listen for XHR data relayed from injected.js ────────────────────────
   window.addEventListener('__ptp_xhr__', (e) => {
     mergePoints(e.detail?.points);
-    scheduleHighlight();
+    highlightAfterChange();
   });
+
+  // Any PowerTeacher request finished (saving a score, loading a page of
+  // columns…). The event carries no data at all.
+  window.addEventListener('__ptp_xhr_done__', highlightAfterChange);
+
+  // A teacher finishing a score entry: Enter/Tab in a grade cell, or leaving
+  // its input. The DOM update follows, so recolor right after.
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === 'Tab') && e.target.closest?.(`${ANY_GRADE_CELL_SELECTOR}, .keypad, table.gridTable`)) {
+      highlightAfterChange();
+    }
+  }, true);
+  document.addEventListener('focusout', (e) => {
+    if (e.target.closest?.(`${ANY_GRADE_CELL_SELECTOR}, .keypad, table.gridTable`)) highlightAfterChange();
+  }, true);
+  document.addEventListener('change', highlightAfterChange, true);
 
   // ── 6. Re-highlight after relevant DOM changes ─────────────────────────────
   const observer = new MutationObserver((mutations) => {
@@ -369,6 +415,15 @@
   }
 
   PTPSettings.onChange(useSettings);
+
+  // Safety net: a full pass every few seconds while the tab is visible. It
+  // only writes to cells whose color is wrong or missing, so it's cheap, and
+  // it repairs anything the watchers above miss (a slow load, an unusual
+  // PowerTeacher update) without the teacher toggling or reloading.
+  const SAFETY_PASS_MS = 3000;
+  setInterval(() => {
+    if (document.visibilityState === 'visible') highlightCells();
+  }, SAFETY_PASS_MS);
 
   injectInterceptor();
 

@@ -1,4 +1,15 @@
-﻿# Changelog — PowerSchool Enhancer
+# Changelog — PowerSchool Enhancer
+
+## 1.0.1 — 2026-11-18
+First update after the Chrome Web Store release.
+
+- Line darkness slider now goes up to 70% black (was 40%), so the lines between rows can be bolder. Saved settings keep their value. The heavy every-5 line (2px) may now reach 95% (was 85%) so it stays distinct.
+- Fixed: colors sometimes never appeared until a reload or toggling highlighting off and on (flag tags still showed). On slow loads, the color pass ran before PowerTeacher finished building the grid, and the change watcher missed the build: PowerTeacher adds bare cells and fills in `data-column-identifier` and the score text afterwards. Seen on the teacher's live tab: 0 of 242 cells painted, then all fixed by one nudge. Now:
+  - the watcher accepts any `td.keypad-cell` or `table.gridTable` being added
+  - a safety pass runs every 3 s while the tab is visible, repainting only wrong or missing cells and logging only when it repaints
+  - colors key on the `data-ptp-highlight` attribute instead of a class (Angular can rewrite class lists), and a cell is skipped only if its `--ptp-bg` value is really still there
+- Fixed: comment badges (and possibly flag letters) floated over PowerTeacher's pinned header row while scrolling. PowerTeacher pins the header with a copy in `div.sticky-header` (position: fixed, z-index 1); our `z-index: 2` (badges) and `z-index: 1` (tags) beat or tied it. Both are now `z-index: auto`.
+- Fixed: an edited grade sometimes kept its old color. When Angular swaps the text node inside a score's `<var>` (or the course grade's `.percent`), the change watcher ignored it because the added node was plain text. Changes inside a grade cell now always trigger a recolor. The extension also recolors right after grade-changing moments: Enter, Tab or leaving a cell's input, any `change` event, and every finished PowerTeacher request (injected.js sends a data-free `__ptp_xhr_done__` signal). Each of these schedules a quick pass plus a safety pass 1.2 s later.
 
 ## 1.0 — 2026-11-10
 First public release (manifest version `1.0`). It includes all the work below, which was built as pre-release 2.0.0 and 2.1.0. Those numbers were never published.

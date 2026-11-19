@@ -48,10 +48,10 @@
   const MAX_COLOR_STRENGTH = 100;
   const DEFAULT_COLOR_STRENGTH = 70;
   const ROW_DIVIDER_MODES = ['off', 'every', 'five', 'both'];
-  // Row line darkness, as percent black. Kept to a modest range on purpose;
-  // 18 matches the lines before the slider existed.
+  // Row line darkness, as percent black (default 18 = the lines before the
+  // slider existed). Capped at 70 so lines never turn solid black.
   const MIN_LINE_DARKNESS = 10;
-  const MAX_LINE_DARKNESS = 40;
+  const MAX_LINE_DARKNESS = 70; // was 40; raised so the lines can be bolder
   const DEFAULT_LINE_DARKNESS = 18;
   const FLAG_TAG_STYLES = ['filled', 'outlined'];
   const FLAG_TAG_LENGTHS = ['letter', 'word'];

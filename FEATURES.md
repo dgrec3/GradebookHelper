@@ -74,7 +74,7 @@ Status legend: ☐ planned · ◐ in progress · ☑ done · ❓ needs live-DOM 
 - ☑ `colorStrength` (30–100, default 70): `--ptp-bg` uses `rgba()` via `PTPSettings.withStrength`; text contrast via `blendOverWhite` + `contrastTextColor`; swatches via `paintSwatch`.
 - ☑ `rowHover` (default on): `html.ptp-row-hover table.gridTable tr[id^="std"]:hover` cells get inset top/bottom box-shadows; the name cell gets a light blue tint.
 - ☑ `rowDividers`: off / every / five / both (default every).
-- ☑ `lineDarkness` (10–40, default 18): `--ptp-line` on `<html>`; every-5 line = 2.5× (max 0.85). Uses classes `ptp-row-lines` and `ptp-row-fives` (`:nth-child(5n)`).
+- ☑ `lineDarkness` (10–70, default 18): `--ptp-line` on `<html>`; every-5 line = 2.5× (max 0.95). Uses classes `ptp-row-lines` and `ptp-row-fives` (`:nth-child(5n)`).
 - ☑ `flagTagStyle`: filled (default) / outlined.
 - ☑ `flagTagLength`: letter (default; `FLAG_DEFINITIONS[].letter`, 9px, one row) / word (`.tag`, 7px, two per column) via class `ptp-flag-tags-word`.
 - ☑ `commentBadge` (default on): class `ptp-comment-badge` on `<html>`. `span.ps-notes-flag:not(.ng-hide)` gets a white background, `opacity: 1`, and a white-then-navy ring shadow.
