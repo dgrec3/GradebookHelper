@@ -5,6 +5,9 @@ _Last updated: 2026-11-10_
 ## What it is
 Chrome MV3 extension that highlights grades in the PowerTeacher Pro scoresheet. Cloned from `github.com/dgrec3/GradebookHelper` (v1.2.1, hard-coded red/yellow). Branch `v1.01` added full customization; branch `v1.02` added split highlighting. Both are merged to `main` and released as manifest version **1.0** (the earlier pre-release numbers 2.0.0/2.1.0 were dropped). Branch `v1.03` (merged to main 2026-11-10) is Chrome Web Store prep: rename to **Gradebook Enhancer for PowerTeacher Pro**, demo page, trimmed XHR relay, icons, privacy policy, listing text and screenshots. Branch `v1.04` (merged to main 2026-11-10): PowerTeacher look-alike demo and screenshots; flag colors and split (multi-color) cells removed: one color per cell, from a score code or else a band. It also adds a color strength slider (translucent highlights let row stripes show through), a row hover outline, row divider lines, and **text flag tags**: MISS/LATE/INC/ABS/EXC tags replace PowerTeacher's tiny squares, pinned to the left edge with the score still centered. See `STORE_REVIEW.md` (risk analysis plus a submit checklist) and `store/LISTING.md` (paste-ready dashboard text).
 
+## Branches (renamed 2026-11-18)
+Pre-release work: `0.01`–`0.08` (formerly v1.01–v1.08). `1.0` (formerly v1.09) = the version published to the Chrome Web Store. `v1.01` = version 1.0.1 (manifest), today's fixes, also on main. Older notes below may still use the former names. Two empty GitHub-only branches, `fix/issue-1-…` and `fix/issue-2-…`, point at the 1.0 commit; their fixes shipped in 1.0.1.
+
 ## Files
 All extension code lives in `extension/`, which is the folder to load in Chrome. Docs stay at the project root because Chrome refuses to load a folder containing `_`-prefixed files like this one.
 
